@@ -24,33 +24,33 @@ public class TestController {
 
     @Operation(summary = " post Test", description = "name과 age를 담아 요청을 하면 id :1(고정), name, age가 반환됩니다.")
     @PostMapping("/userTest")
-    public User testUser(@RequestBody UserForm userForm) {
+    public TestUser testUser(@RequestBody TestUserForm testUserForm) {
 
-        return new User(userForm.getName(), userForm.getAge());
+        return new TestUser(testUserForm.getName(), testUserForm.getAge());
 
     }
 
 
 
     @Data
-    public static class User{
+    public static class TestUser {
 
         Integer id=1;
         String name;
         Integer age;
 
-        public User(String name, Integer age) {
+        public TestUser(String name, Integer age) {
             this.name = name;
             this.age = age;
         }
     }
 
     @Data
-    public static class UserForm{
+    public static class TestUserForm {
 
         String name;
         Integer age;
-        public UserForm(String name, Integer age) {
+        public TestUserForm(String name, Integer age) {
             this.name = name;
             this.age = age;
         }

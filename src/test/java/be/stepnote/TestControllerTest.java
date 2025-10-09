@@ -1,6 +1,6 @@
 package be.stepnote;
 
-import be.stepnote.TestController.UserForm;
+import be.stepnote.TestController.TestUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,8 +39,8 @@ class TestControllerTest {
 
         String name = "testUser";
         Integer age = 20;
-        UserForm userForm = new UserForm(name, age);
-        String jsonContent = objectMapper.writeValueAsString(userForm);
+        TestUserForm testUserForm = new TestUserForm(name, age);
+        String jsonContent = objectMapper.writeValueAsString(testUserForm);
 
         mvc.perform(post("/userTest")
                         .contentType(MediaType.APPLICATION_JSON)
