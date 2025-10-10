@@ -1,6 +1,7 @@
 package be.stepnote;
 
-import be.stepnote.TestController.TestUserForm;
+import be.stepnote.security.TestController;
+import be.stepnote.security.TestController.TestUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
