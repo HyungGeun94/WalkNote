@@ -37,3 +37,4 @@ out/
 .vscode/
 /src/test/java/be/stepnote/Test.java
 /src/main/resources/application.yml
+/memo.txt
