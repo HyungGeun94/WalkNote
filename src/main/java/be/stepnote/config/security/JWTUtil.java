@@ -1,4 +1,4 @@
-package be.stepnote.security;
+package be.stepnote.config.security;
 
 import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;
