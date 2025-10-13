@@ -1,4 +1,4 @@
-package be.stepnote.websocket;
+package be.stepnote.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
