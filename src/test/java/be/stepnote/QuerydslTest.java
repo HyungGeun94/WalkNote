@@ -1,12 +1,12 @@
 package be.stepnote;
 
 
-import static be.stepnote.member.QUserEntity.*;
+import static be.stepnote.member.entity.QMember.*;
 import static org.assertj.core.api.Assertions.*;
 
-import be.stepnote.member.QUserEntity;
-import be.stepnote.member.UserEntity;
-import be.stepnote.member.UserRepository;
+import be.stepnote.member.entity.Member;
+import be.stepnote.member.entity.QMember;
+import be.stepnote.member.repository.MemberRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.util.List;
@@ -26,14 +26,14 @@ public class QuerydslTest {
     JPAQueryFactory queryFactory;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
 
     @Test
     public void test() {
 
-        List<UserEntity> list = queryFactory.select(userEntity)
-            .from(userEntity)
+        List<Member> list = queryFactory.select(member)
+            .from(member)
             .fetch();
 
         assertThat(list.size()).isEqualTo(1);
@@ -46,7 +46,7 @@ public class QuerydslTest {
     @Test
     public void test2() {
 
-        List<UserEntity> allUsers = userRepository.findAllUsers();
+        List<Member> allUsers = memberRepository.findAllUsers();
 
         assertThat(allUsers.size()).isEqualTo(1);
         assertThat(allUsers.get(0).getUsername()).isEqualTo("test");
