@@ -1,9 +1,10 @@
 package be.stepnote.websocket;
 
-import be.stepnote.security.JWTUtil;
-import be.stepnote.security.UserEntity;
+import be.stepnote.config.security.JWTUtil;
+import be.stepnote.member.entity.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -47,14 +48,17 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             String role = jwtUtil.getRole(token);
 
             // 4️⃣ UserEntity 흉내 (JWT에서만 얻은 최소 정보)
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUsername(username);
-            userEntity.setPassword("temppassword");
-            userEntity.setRole(role);
+            Member member = Member
+                .builder()
+                .username(username)
+                .role(role)
+                .password("temppasworddd")
+                .nickname(UUID.randomUUID().toString())
+                .build();
 
             // 5️⃣ WebSocket 세션 attributes에 저장
             // (이후 handleTextMessage()에서 session.getAttributes()로 꺼냄)
-            attributes.put("user", userEntity);
+            attributes.put("member", member);
 
             System.out.println("✅ WebSocket handshake success for user: " + username);
             return true;
