@@ -21,7 +21,6 @@ public class SecurityAuditorAware implements AuditorAware<Member> {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        CustomOAuth2User principal = (CustomOAuth2User) authentication.getPrincipal();
 
 
 
@@ -29,8 +28,23 @@ public class SecurityAuditorAware implements AuditorAware<Member> {
             return Optional.empty();
         }
 
-        String username = principal.getUsername(); // principal
-        return memberRepository.findByUsername(username);
+        Object principal = authentication.getPrincipal();
+
+        //  principal이 문자열("anonymousUser")로 들어오는 경우도 있음
+        if (principal instanceof CustomOAuth2User customUser) {
+            String username = customUser.getUsername();
+            return memberRepository.findByUsername(username);
+        }
+
+        //  폼 로그인 유저 등 다른 타입 고려
+        if (principal instanceof org.springframework.security.core.userdetails.User springUser) {
+            return memberRepository.findByUsername(springUser.getUsername());
+        }
+
+        //  익명 유저거나 타입이 맞지 않는 경우
+        return Optional.empty();
+
+
 
     }
 }
