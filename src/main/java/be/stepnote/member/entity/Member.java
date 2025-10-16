@@ -21,12 +21,14 @@ public class Member {
     private int id;
 
 //    폼 로그인 및 소셜로그인 할 때 고유id에 해당
+    @Column(unique = true, nullable = true)
     private String username;
 
     private String profileImageUrl;
 
     private String bio;
 
+    @Column(unique = true, nullable = true)
     private String nickname;
 
     private String name;
