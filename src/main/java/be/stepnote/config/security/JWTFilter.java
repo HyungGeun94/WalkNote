@@ -24,6 +24,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+
         //request에서 Authorization 헤더를 찾음
         String authorization= request.getHeader("Authorization");
 
@@ -51,23 +52,36 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+
+
+
+
         //토큰에서 username과 role 획득
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        //userEntity를 생성하여 값 set
-        Member member = Member.builder()
-            .username(username)
-            .password("temppassword")
-            .role(role)
-            .nickname(UUID.randomUUID().toString())
-            .build();
+        //userDTO를 생성하여 값 set
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(username);
+        userDTO.setRole(role);
 
         //UserDetails에 회원 정보 객체 담기
-        CustomUserDetails customUserDetails = new CustomUserDetails(member);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
         //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+
+//        //userEntity를 생성하여 값 set
+//        Member member = Member.builder()
+//            .username(username)
+//            .password("temppassword")
+//            .role(role)
+//            .nickname(UUID.randomUUID().toString())
+//            .build();
+//
+//        //UserDetails에 회원 정보 객체 담기
+//        CustomUserDetails customUserDetails = new CustomUserDetails(member);
+
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
