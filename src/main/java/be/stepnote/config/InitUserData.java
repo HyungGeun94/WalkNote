@@ -25,6 +25,7 @@ public class InitUserData {
         Member member = Member.builder()
             .username(username)
             .nickname("stepnote")
+            .name("stepnote")
             .password(bCryptPasswordEncoder.encode("1234"))
             .role("ROLE_USER")
             .build();

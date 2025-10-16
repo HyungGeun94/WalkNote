@@ -13,32 +13,40 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    폼 로그인할 때 아이디에 해당.
+//    폼 로그인 및 소셜로그인 할 때 고유id에 해당
     private String username;
 
-    @Column(unique = true, nullable = false)
+    private String profileImageUrl;
+
+    private String bio;
+
     private String nickname;
 
     private String name;
+
+    private String email;
 
     private String password;
 
     private String role;
 
     @Builder
-    public Member(String username, String role, String password,String nickname) {
+    public Member(String username, String role, String password,String nickname,String email, String profileImageUrl
+    , String bio, String name) {
         this.username = username;
         this.role = role;
         this.password = password;
         this.nickname = nickname;
+        this.email = email;
         this.name = name;
+        this.bio = bio;
+        this.profileImageUrl = profileImageUrl;
     }
 }
