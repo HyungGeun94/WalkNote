@@ -41,12 +41,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (existData == null) {
 
-            Member member = new Member();
-            member.setUsername(username);
-            member.setNickname(oAuth2Response.getNickName());
-            member.setEmail(oAuth2Response.getEmail());
-            member.setProfileImageUrl(oAuth2Response.getProfileImageUrl());
-            member.setRole("ROLE_USER");
+            Member member = Member.builder()
+                .username(username)
+                .nickname(oAuth2Response.getNickName())
+                .email(oAuth2Response.getEmail())
+                .profileImageUrl(oAuth2Response.getProfileImageUrl())
+                .role("ROLE_USER")
+                .build();
 
             memberRepository.save(member);
 
