@@ -1,15 +1,34 @@
 package be.stepnote.report;
 
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
+
+import be.stepnote.member.entity.Member;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class WalkReport {
 
     @Id
@@ -18,16 +37,86 @@ public class WalkReport {
 
     private double distance;      // 총 거리
     private int steps;
-    private long duration;        // 총 시간(초 단위)
-    private double avgSpeed;      // 평균 속도
     private double calorie;       // 칼로리
-
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private LocalDateTime createdAt;
+    private long duration;        // 총 시간(분 단위)
 
     private String title;
+
+    @Column(length = 1000)
     private String content;
 
+    @CreatedBy
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member createdBy;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    private boolean isPublic; // 피드 업로드 유무
+
+
+    @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
+    private List<WalkReportImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
+    private List<WalkCoordinate> coordinates = new ArrayList<>();
+
+
+    public static WalkReport create(WalkReportRequest dto) {
+        WalkReport report = new WalkReport();
+        report.distance = dto.getDistance();
+        report.steps = dto.getSteps();
+        report.calorie = dto.getCalorie();
+        report.startTime = dto.getStartTime();
+        report.endTime = dto.getEndTime();
+        report.duration = dto.getDuration();
+        report.title = dto.getTitle();
+        report.content = dto.getContent();
+        report.isPublic = dto.isPublic();
+
+        // 좌표 추가
+        if (dto.getCoordinates() != null) {
+            dto.getCoordinates().forEach(c ->
+                report.addCoordinate(new WalkCoordinate(c.getLatitude(), c.getLongitude()))
+            );
+        }
+
+        // 이미지 추가
+        if (dto.getImages() != null) {
+            dto.getImages().forEach(url ->
+                report.addImage(new WalkReportImage(url))
+            );
+        }
+
+        return report;
+    }
+
+    public void toggleVisibility() {
+        this.isPublic = !this.isPublic;
+    }
+
+    public void addImage(WalkReportImage image) {
+        image.addWalkReport(this);
+        images.add(image);
+    }
+
+    public void addCoordinate(WalkCoordinate coord) {
+        coord.addWalkReport(this);
+        coordinates.add(coord);
+    }
+
+    public String findFirstImageUrl() {
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        return images.get(0).getUrl();
+    }
 }
