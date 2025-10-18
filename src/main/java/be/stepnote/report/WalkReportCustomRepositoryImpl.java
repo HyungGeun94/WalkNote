@@ -1,8 +1,7 @@
 package be.stepnote.report;
 
-import static be.stepnote.report.QWalkReport.*;
-import static be.stepnote.report.QWalkReportFavorite.*;
-import static be.stepnote.report.QWalkReportImage.*;
+import static be.stepnote.report.QWalkReport.walkReport;
+import static be.stepnote.report.QWalkReportFavorite.walkReportFavorite;
 
 import be.stepnote.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
@@ -32,7 +31,7 @@ public class WalkReportCustomRepositoryImpl implements WalkReportCustomRepositor
         condition.and(walkReport.createdBy.id.eq(member.getId())); // 기본 조건
 
         if (publicVisibility) {
-            condition.and(walkReport.isPublic.isTrue()); // ✅ 공개 게시글만 필터링
+            condition.and(walkReport.isPublic.isTrue()); //  공개 게시글만 필터링
         }
 
         List<WalkReport> results = queryFactory

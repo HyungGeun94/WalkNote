@@ -1,6 +1,8 @@
 package be.stepnote.report;
 
 import be.stepnote.config.security.CustomOAuth2User;
+import be.stepnote.report.feed.WalkReportFeedResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -72,6 +74,14 @@ public class WalkReportController {
             walkReportService.getMyFavoriteReports(pageable, user.getUsername());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/feed")
+    public List<WalkReportFeedResponse> getFeed(
+        @AuthenticationPrincipal CustomOAuth2User user,
+        Pageable pageable
+    ) {
+        return walkReportService.getFeed(pageable, user.getUsername());
     }
 
 //    산책 리포트 업데이트
