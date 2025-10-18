@@ -24,7 +24,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
 //    폼 로그인 및 소셜로그인 할 때 고유id에 해당
     @Column(unique = true, nullable = true)
