@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,17 @@ public class WalkReportService {
         List<WalkReport> reports = walkReportRepository.findAll(pageable).getContent();
 
         return feedAssembler.assemble(reports,me);
+    }
+
+    public void toggleVisibility(String userName, Long reportId) {
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        if (!report.getCreatedBy().getUsername().equals(userName)) {
+            throw new AccessDeniedException("본인 리포트만 공개 상태를 변경할 수 있습니다.");
+        }
+
+        report.toggleVisibility();
     }
 
 }

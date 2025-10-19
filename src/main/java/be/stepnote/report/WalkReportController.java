@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,6 +83,15 @@ public class WalkReportController {
         Pageable pageable
     ) {
         return walkReportService.getFeed(pageable, user.getUsername());
+    }
+
+    @PostMapping("/api/reports/{reportId}/public")
+    public ResponseEntity<Void> toggleVisibility(
+        @AuthenticationPrincipal CustomOAuth2User user,
+        @PathVariable Long reportId
+    ) {
+        walkReportService.toggleVisibility(user.getUsername(), reportId);
+        return ResponseEntity.ok().build();
     }
 
 //    산책 리포트 업데이트
