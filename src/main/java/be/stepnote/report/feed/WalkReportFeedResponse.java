@@ -26,6 +26,9 @@ public class WalkReportFeedResponse {
 
     private boolean isFavorited;
 
+    private boolean isLiked;
+    private Long likeCount;
+
 
     private LocalDateTime createdAt;
 }
