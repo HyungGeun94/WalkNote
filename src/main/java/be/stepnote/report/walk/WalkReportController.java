@@ -1,6 +1,8 @@
-package be.stepnote.report;
+package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
+import be.stepnote.report.WalkReportRequest;
+import be.stepnote.report.WalkReportSummaryResponse;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,10 +97,25 @@ public class WalkReportController {
         return ResponseEntity.ok().build();
     }
 
-//    산책 리포트 업데이트
-//    @PatchMapping()
-//    public void updateReport(){
-//    }
+    @PatchMapping("/api/reports/{id}")
+    public ResponseEntity<Void> updateReport(
+        @AuthenticationPrincipal CustomOAuth2User me,
+        @PathVariable Long id,
+        @RequestBody WalkReportUpdateRequest request
+    ) {
+        walkReportService.updateReport(me.getUsername(), id, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/reports/{id}")
+    public ResponseEntity<WalkReportEditResponse> getReportForEdit(
+        @AuthenticationPrincipal CustomOAuth2User me,
+        @PathVariable Long id
+    ) {
+        WalkReportEditResponse response = walkReportService.getReportForEdit(me.getUsername(), id);
+        return ResponseEntity.ok(response);
+    }
+
 
 //    산책 리포트 삭제
 //    @DeleteMapping

@@ -108,6 +108,15 @@ public class WalkReport {
         images.add(image);
     }
 
+    public void update(String title, String content, List<String> imageUrls) {
+        if (title != null) this.title = title;
+        if (content != null) this.content = content;
+        if (imageUrls != null) {
+            this.images.clear();
+            imageUrls.forEach(url -> this.addImage(new WalkReportImage(url)));
+        }
+    }
+
     public void addCoordinate(WalkCoordinate coord) {
         coord.addWalkReport(this);
         coordinates.add(coord);
