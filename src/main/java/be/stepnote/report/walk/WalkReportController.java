@@ -3,6 +3,7 @@ package be.stepnote.report.walk;
 import be.stepnote.config.security.CustomOAuth2User;
 import be.stepnote.report.WalkReportRequest;
 import be.stepnote.report.WalkReportSummaryResponse;
+import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -116,6 +117,12 @@ public class WalkReportController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/api/reports/{id}/follow")
+    public ResponseEntity<WalkRouteFollowResponse> getRouteForFollow(@PathVariable Long id) {
+        WalkRouteFollowResponse response = walkReportService.getRouteForFollow(id);
+        return ResponseEntity.ok(response);
+    }
+
 
 //    산책 리포트 삭제
 //    @DeleteMapping
@@ -123,10 +130,4 @@ public class WalkReportController {
 //        return null;
 //    }
 
-    // “따라가기용” 경로 조회 API
-//    @GetMapping("/{id}/path")
-//    public ResponseEntity<List<WalkCoordinate>> getPath(@PathVariable Long id) {
-//        List<WalkCoordinate> coordinates = walkReportService.getCoordinates(id);
-//        return ResponseEntity.ok(coordinates);
-//    }
 }

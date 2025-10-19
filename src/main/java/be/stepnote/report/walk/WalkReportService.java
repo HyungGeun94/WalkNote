@@ -2,6 +2,7 @@ package be.stepnote.report.walk;
 
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
+import be.stepnote.report.CoordinateResponse;
 import be.stepnote.report.WalkReport;
 import be.stepnote.report.WalkReportFavorite;
 import be.stepnote.report.WalkReportFavoriteRepository;
@@ -9,6 +10,7 @@ import be.stepnote.report.WalkReportImage;
 import be.stepnote.report.WalkReportRepository;
 import be.stepnote.report.WalkReportRequest;
 import be.stepnote.report.WalkReportSummaryResponse;
+import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.feed.WalkReportFeedAssembler;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
@@ -110,6 +112,21 @@ public class WalkReportService {
             .content(report.getContent())
             .imageUrls(report.getImages().stream()
                 .map(WalkReportImage::getUrl)
+                .toList())
+            .build();
+    }
+
+    public WalkRouteFollowResponse getRouteForFollow(Long reportId) {
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        return WalkRouteFollowResponse.builder()
+            .reportId(report.getId())
+            .title(report.getTitle())
+            .content(report.getContent())
+            .authorNickname(report.getCreatedBy().getNickname())
+            .coordinates(report.getCoordinates().stream()
+                .map(coord -> new CoordinateResponse(coord.getLatitude(), coord.getLongitude()))
                 .toList())
             .build();
     }
