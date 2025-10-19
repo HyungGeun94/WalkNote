@@ -42,23 +42,34 @@ public class WalkReportComment {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "parent_id")
+    private WalkReportComment parent; // 원본 댓글이면 null
+
     private String content;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    // 대댓글 대비용 (nullable)
-    @Column(name = "parent_id")
-    private Long parentId;
 
-    private WalkReportComment(WalkReport report, Member member, String content, Long parentId) {
+
+    public static WalkReportComment createReply(Member member, WalkReport report, WalkReportComment parent, String content) {
+        return new WalkReportComment(report, member, content, parent);
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+
+    private WalkReportComment(WalkReport report, Member member, String content, WalkReportComment walkReportComment) {
         this.walkReport = report;
         this.member = member;
         this.content = content;
-        this.parentId = parentId;
+        this.parent = walkReportComment;
     }
 
-    public static WalkReportComment create(WalkReport report, Member member, String content) {
+    public static WalkReportComment createRoot(WalkReport report, Member member, String content) {
         return new WalkReportComment(report, member, content, null);
     }
 }

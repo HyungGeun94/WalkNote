@@ -1,9 +1,14 @@
 package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
+import be.stepnote.member.entity.Member;
 import be.stepnote.report.WalkReportRequest;
 import be.stepnote.report.WalkReportSummaryResponse;
 import be.stepnote.report.WalkRouteFollowResponse;
+import be.stepnote.report.comment.CommentRequest;
+import be.stepnote.report.comment.CommentResponse;
+import be.stepnote.report.comment.ReplyResponse;
+import be.stepnote.report.comment.WalkReportComment;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,7 @@ public class WalkReportController {
     private final int DEFAULT_PAGE_SIZE = 2;
 
     private final WalkReportService walkReportService;
+
 
     @PostMapping
     public ResponseEntity<Long> createReport(@RequestBody WalkReportRequest request
@@ -123,6 +129,26 @@ public class WalkReportController {
         return ResponseEntity.ok(response);
     }
 
+    // 댓글 작성 (root or reply 모두 처리)
+    @PostMapping
+    public void createComment(@AuthenticationPrincipal Member member,
+        @RequestBody CommentRequest request) {
+        walkReportService.replyCreate(member, request);
+    }
+
+    // 리포트별 댓글 조회 (원본 댓글)
+    @GetMapping("/reports/{reportId}")
+    public List<CommentResponse> getRootComments(@PathVariable Long reportId, Pageable pageable) {
+        return walkReportService.getRootComments(reportId, pageable);
+    }
+
+    // 특정 댓글의 대댓글 조회
+    @GetMapping("/{parentId}/replies")
+    public List<ReplyResponse> getReplies(@PathVariable Long parentId) {
+        return walkReportService.getReplies(parentId);
+    }
+}
+
 
 //    산책 리포트 삭제
 //    @DeleteMapping
@@ -130,4 +156,3 @@ public class WalkReportController {
 //        return null;
 //    }
 
-}

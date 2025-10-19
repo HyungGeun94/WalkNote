@@ -11,6 +11,11 @@ import be.stepnote.report.WalkReportRepository;
 import be.stepnote.report.WalkReportRequest;
 import be.stepnote.report.WalkReportSummaryResponse;
 import be.stepnote.report.WalkRouteFollowResponse;
+import be.stepnote.report.comment.CommentRequest;
+import be.stepnote.report.comment.CommentResponse;
+import be.stepnote.report.comment.ReplyResponse;
+import be.stepnote.report.comment.WalkReportComment;
+import be.stepnote.report.comment.WalkReportCommentRepository;
 import be.stepnote.report.feed.WalkReportFeedAssembler;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
@@ -32,6 +37,7 @@ public class WalkReportService {
     private final MemberRepository memberRepository;
     private final WalkReportFavoriteRepository walkReportFavoriteRepository;
     private final WalkReportFeedAssembler feedAssembler;
+    private final WalkReportCommentRepository commentRepository;
 
     public Long createReport(WalkReportRequest dto) {
 
@@ -129,6 +135,44 @@ public class WalkReportService {
                 .map(coord -> new CoordinateResponse(coord.getLatitude(), coord.getLongitude()))
                 .toList())
             .build();
+    }
+
+
+    public void replyCreate(Member author, CommentRequest request) {
+        WalkReport report = walkReportRepository.findById(request.getReportId())
+            .orElseThrow(() -> new IllegalArgumentException("리포트 없음"));
+
+        if (request.getParentId() == null) {
+            WalkReportComment root = WalkReportComment.createRoot(report, author , request.getContent());
+            commentRepository.save(root);
+        } else {
+            WalkReportComment parent = commentRepository.findById(request.getParentId())
+                .orElseThrow(() -> new IllegalArgumentException("부모 댓글 없음"));
+            WalkReportComment reply = WalkReportComment.createReply(author, report, parent, request.getContent());
+            commentRepository.save(reply);
+        }
+    }
+
+    public List<CommentResponse> getRootComments(Long reportId, Pageable pageable) {
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트 없음"));
+
+        List<WalkReportComment> roots = commentRepository
+            .findByWalkReportAndParentIsNullOrderByCreatedAtDesc(report, pageable);
+
+        return roots.stream()
+            .map(c -> CommentResponse.from(c, commentRepository.countByParent(c)))
+            .toList();
+    }
+
+    public List<ReplyResponse> getReplies(Long parentId) {
+        WalkReportComment parent = commentRepository.findById(parentId)
+            .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
+
+        return commentRepository.findByParentOrderByCreatedAtAsc(parent)
+            .stream()
+            .map(ReplyResponse::from)
+            .toList();
     }
 
 
