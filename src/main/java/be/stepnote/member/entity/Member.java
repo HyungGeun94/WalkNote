@@ -19,7 +19,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class Member {
 
     @Id
@@ -47,10 +46,8 @@ public class Member {
 
     private String fcmToken;
 
-    @CreatedDate
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Builder
@@ -68,5 +65,15 @@ public class Member {
 
     public void updateFcmToken(String token) {
         this.fcmToken = token;
+    }
+
+    public void updatePartial(String bio, String nickname, String imageUrl) {
+        if (hasText(bio)) this.bio = bio;
+        if (hasText(nickname)) this.nickname = nickname;
+        if (hasText(imageUrl)) this.profileImageUrl = imageUrl;
+    }
+
+    private boolean hasText(String s) {
+        return s != null && !s.trim().isEmpty();
     }
 }
