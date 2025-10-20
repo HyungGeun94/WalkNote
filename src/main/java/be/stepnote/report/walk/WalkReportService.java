@@ -1,5 +1,6 @@
 package be.stepnote.report.walk;
 
+import be.stepnote.global.SliceResponse;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
 import be.stepnote.report.favorite.WalkReportFavorite;
@@ -48,14 +49,34 @@ public class WalkReportService {
     }
 
     @Transactional(readOnly = true)
-    public Slice<WalkReportSummaryResponse> getReports(Pageable pageable, String username,
+    public SliceResponse<WalkReportSummaryResponse> getReports(Pageable pageable, String username,
         boolean publicVisibility) {
         Member member = memberRepository.findByUsername(username).orElseThrow();
 
         Slice<WalkReport> walkReports = walkReportRepository.findReportSummaries(member,
             pageable, publicVisibility);
 
-        return walkReports.map(walkReport -> new WalkReportSummaryResponse(walkReport));
+        Integer count = 0;
+
+        if(publicVisibility) {
+            List<WalkReport> byCreatedByAndPublicIsTrue = walkReportRepository.findByCreatedByAndIsPublic(
+                member, publicVisibility);
+
+            count = byCreatedByAndPublicIsTrue.size();
+        }
+        else{
+            List<WalkReport> byCreatedBy = walkReportRepository.findByCreatedBy(member);
+            count = byCreatedBy.size();
+        }
+
+
+        Slice<WalkReportSummaryResponse> map = walkReports.map(
+            walkReport -> new WalkReportSummaryResponse(walkReport));
+
+        SliceResponse<WalkReportSummaryResponse> walkReportSummaryResponseSliceResponse = SliceResponse.of(
+            map, count);
+
+        return walkReportSummaryResponseSliceResponse;
     }
 
     public Slice<WalkReportSummaryResponse> getMyFavoriteReports(Pageable pageable,

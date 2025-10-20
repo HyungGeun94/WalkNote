@@ -1,6 +1,8 @@
 package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
+import be.stepnote.global.ApiResponse;
+import be.stepnote.global.SliceResponse;
 import be.stepnote.member.entity.Member;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
@@ -30,11 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class WalkReportController {
 
-    private final int DEFAULT_PAGE_SIZE = 2;
+    private final int DEFAULT_PAGE_SIZE = 4;
 
     private final WalkReportService walkReportService;
 
 
+    /**
+     * 산책 리포트 생성
+     */
     @PostMapping
     public ResponseEntity<Long> createReport(@RequestBody WalkReportRequest request
     ) {
@@ -44,8 +49,13 @@ public class WalkReportController {
     }
 
 
+    /**
+     * 산책 리포트 조회
+     * publicVisibility = true면 산책 리포트 공개 피드로 한것만 조회
+     * publicVisibility = false면 산책 리포트 전체 조회
+     */
     @GetMapping("/list")
-    public ResponseEntity<Slice<WalkReportSummaryResponse>> getReports(
+    public ApiResponse<SliceResponse<WalkReportSummaryResponse>> getReports(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "LATEST") String sort,
         @AuthenticationPrincipal CustomOAuth2User user,
@@ -58,10 +68,10 @@ public class WalkReportController {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, sortOption);
 
-        Slice<WalkReportSummaryResponse> response =
-            walkReportService.getReports(pageable, user.getUsername(), publicVisibility);
+        SliceResponse<WalkReportSummaryResponse> reports = walkReportService.getReports(pageable,
+            user.getUsername(), publicVisibility);
 
-        return ResponseEntity.ok(response);
+        return ApiResponse.success(reports);
     }
 
 
