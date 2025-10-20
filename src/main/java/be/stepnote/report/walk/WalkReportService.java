@@ -131,9 +131,6 @@ public class WalkReportService {
             .title(report.getTitle())
             .content(report.getContent())
             .authorNickname(report.getCreatedBy().getNickname())
-            .coordinates(report.getCoordinates().stream()
-                .map(coord -> new CoordinateResponse(coord.getLatitude(), coord.getLongitude()))
-                .toList())
             .build();
     }
 

@@ -58,17 +58,16 @@ public class WalkReport {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    private String startPoint;
+
+    private String endPoint;
+
     private boolean isPublic; // 피드 업로드 유무
 
 
     @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     private List<WalkReportImage> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
-    @BatchSize(size = 10)
-    private List<WalkCoordinate> coordinates = new ArrayList<>();
-
 
     public static WalkReport create(WalkReportRequest dto) {
         WalkReport report = new WalkReport();
@@ -81,13 +80,8 @@ public class WalkReport {
         report.title = dto.getTitle();
         report.content = dto.getContent();
         report.isPublic = dto.isPublic();
-
-        // 좌표 추가
-        if (dto.getCoordinates() != null) {
-            dto.getCoordinates().forEach(c ->
-                report.addCoordinate(new WalkCoordinate(c.getLatitude(), c.getLongitude()))
-            );
-        }
+        report.startPoint = dto.getStartPoint();
+        report.endPoint = dto.getEndPoint();
 
         // 이미지 추가
         if (dto.getImages() != null) {
@@ -117,10 +111,6 @@ public class WalkReport {
         }
     }
 
-    public void addCoordinate(WalkCoordinate coord) {
-        coord.addWalkReport(this);
-        coordinates.add(coord);
-    }
 
     public String findFirstImageUrl() {
         if (images == null || images.isEmpty()) {

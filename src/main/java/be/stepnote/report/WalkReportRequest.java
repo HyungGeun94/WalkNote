@@ -21,6 +21,10 @@ public class WalkReportRequest {
     private String title;
     private String content;
 
+    private String startPoint;
+
+    private String endPoint;
+
     @JsonProperty("isPublic")
     private boolean isPublic;
 
@@ -29,13 +33,4 @@ public class WalkReportRequest {
 
     private List<String> images;
 
-    private List<Coordinate> coordinates;
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Coordinate {
-        private double latitude;
-        private double longitude;
-    }
 }
