@@ -1,8 +1,9 @@
-package be.stepnote.report;
+package be.stepnote.report.favorite;
 
 import static jakarta.persistence.FetchType.LAZY;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.report.walk.WalkReport;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;

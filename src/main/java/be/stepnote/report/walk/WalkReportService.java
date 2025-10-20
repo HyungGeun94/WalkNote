@@ -2,14 +2,9 @@ package be.stepnote.report.walk;
 
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
-import be.stepnote.report.CoordinateResponse;
-import be.stepnote.report.WalkReport;
-import be.stepnote.report.WalkReportFavorite;
-import be.stepnote.report.WalkReportFavoriteRepository;
-import be.stepnote.report.WalkReportImage;
-import be.stepnote.report.WalkReportRepository;
-import be.stepnote.report.WalkReportRequest;
-import be.stepnote.report.WalkReportSummaryResponse;
+import be.stepnote.report.favorite.WalkReportFavorite;
+import be.stepnote.report.favorite.WalkReportFavoriteRepository;
+import be.stepnote.report.image.WalkReportImage;
 import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;

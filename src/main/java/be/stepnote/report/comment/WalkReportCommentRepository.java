@@ -1,6 +1,6 @@
 package be.stepnote.report.comment;
 
-import be.stepnote.report.WalkReport;
+import be.stepnote.report.walk.WalkReport;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

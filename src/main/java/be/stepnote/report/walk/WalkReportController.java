@@ -2,13 +2,10 @@ package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
 import be.stepnote.member.entity.Member;
-import be.stepnote.report.WalkReportRequest;
-import be.stepnote.report.WalkReportSummaryResponse;
 import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
 import be.stepnote.report.comment.ReplyResponse;
-import be.stepnote.report.comment.WalkReportComment;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

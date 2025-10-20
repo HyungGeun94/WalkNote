@@ -1,4 +1,4 @@
-package be.stepnote.report;
+package be.stepnote.report.walk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;

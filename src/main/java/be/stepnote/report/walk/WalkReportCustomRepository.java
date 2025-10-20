@@ -1,4 +1,4 @@
-package be.stepnote.report;
+package be.stepnote.report.walk;
 
 import be.stepnote.member.entity.Member;
 import org.springframework.data.domain.Pageable;

@@ -1,9 +1,10 @@
-package be.stepnote.report;
+package be.stepnote.report.walk;
 
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.report.image.WalkReportImage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

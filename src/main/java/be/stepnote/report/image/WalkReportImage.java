@@ -1,5 +1,6 @@
-package be.stepnote.report;
+package be.stepnote.report.image;
 
+import be.stepnote.report.walk.WalkReport;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

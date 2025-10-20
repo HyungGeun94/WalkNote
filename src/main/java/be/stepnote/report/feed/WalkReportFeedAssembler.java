@@ -2,8 +2,8 @@ package be.stepnote.report.feed;
 
 import be.stepnote.follow.FollowRepository;
 import be.stepnote.member.entity.Member;
-import be.stepnote.report.WalkReport;
-import be.stepnote.report.WalkReportFavoriteRepository;
+import be.stepnote.report.walk.WalkReport;
+import be.stepnote.report.favorite.WalkReportFavoriteRepository;
 import be.stepnote.report.comment.WalkReportCommentRepository;
 import be.stepnote.report.like.WalkReportLikeRepository;
 import java.util.HashSet;
@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.stereotype.Component;
 
 @Component

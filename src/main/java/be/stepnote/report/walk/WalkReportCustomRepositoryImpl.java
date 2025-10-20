@@ -1,9 +1,10 @@
-package be.stepnote.report;
+package be.stepnote.report.walk;
 
 import static be.stepnote.report.QWalkReport.walkReport;
 import static be.stepnote.report.QWalkReportFavorite.walkReportFavorite;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.report.QWalkReport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;

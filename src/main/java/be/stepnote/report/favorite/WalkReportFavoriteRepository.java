@@ -1,4 +1,4 @@
-package be.stepnote.report;
+package be.stepnote.report.favorite;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
