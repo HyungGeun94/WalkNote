@@ -32,7 +32,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtUtil.createJwt(username, role, 60*60*60L);
 
-        String redirectUrl = "http://localhost:3000?token=" + token;
+//        String redirectUrl = "http://localhost:3000?token=" + token;
+        String redirectUrl = "my:app://callback?token=" + token;
         response.sendRedirect(redirectUrl);
 
 

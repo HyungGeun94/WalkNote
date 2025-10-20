@@ -130,7 +130,7 @@ public class WalkReportController {
     }
 
     // 댓글 작성 (root or reply 모두 처리)
-    @PostMapping
+    @PostMapping("/reply")
     public void createComment(@AuthenticationPrincipal Member member,
         @RequestBody CommentRequest request) {
         walkReportService.replyCreate(member, request);
