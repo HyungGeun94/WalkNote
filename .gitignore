@@ -40,3 +40,4 @@ out/
 /src/main/resources/application-test.yml
 /src/test/resources/application.yml
 /memo.txt
+/src/main/resources/firebasekey/firebase-admin-key.json

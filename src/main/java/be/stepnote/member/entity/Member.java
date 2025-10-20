@@ -45,6 +45,8 @@ public class Member {
 
     private String role;
 
+    private String fcmToken;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -62,5 +64,9 @@ public class Member {
         this.name = name;
         this.bio = bio;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateFcmToken(String token) {
+        this.fcmToken = token;
     }
 }
