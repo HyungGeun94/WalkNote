@@ -2,7 +2,6 @@ package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
 import be.stepnote.member.entity.Member;
-import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
 import be.stepnote.report.comment.ReplyResponse;
@@ -120,11 +119,6 @@ public class WalkReportController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/reports/{id}/follow")
-    public ResponseEntity<WalkRouteFollowResponse> getRouteForFollow(@PathVariable Long id) {
-        WalkRouteFollowResponse response = walkReportService.getRouteForFollow(id);
-        return ResponseEntity.ok(response);
-    }
 
     // 댓글 작성 (root or reply 모두 처리)
     @PostMapping("/reply")

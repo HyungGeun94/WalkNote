@@ -79,10 +79,11 @@ class WalkReportServiceTest {
             60,
             "테스트 리포트",
             "날씨가 좋아요",
+            "서울",
+            "서울",
             true,  // isPublic
             false, // isFavorite
-            List.of("https://s3.amazonaws.com/img1.png"),
-            List.of(new WalkReportRequest.Coordinate(37.528, 126.93))
+            List.of("https://s3.amazonaws.com/img1.png")
         );
 
         // when
@@ -93,7 +94,6 @@ class WalkReportServiceTest {
 
         assertThat(saved.getTitle()).isEqualTo("테스트 리포트");
         assertThat(saved.getImages()).hasSize(1);
-        assertThat(saved.getCoordinates()).hasSize(1);
         assertThat(saved.getCreatedBy().getUsername()).isEqualTo("testUser22");
     }
 
@@ -107,9 +107,10 @@ class WalkReportServiceTest {
             30,
             "즐겨찾기 테스트",
             "좋은 코스였음",
+            "서울",
+            "서울",
             true,  // isPublic
             true,  // isFavorite ✅
-            List.of(),
             List.of()
         );
 

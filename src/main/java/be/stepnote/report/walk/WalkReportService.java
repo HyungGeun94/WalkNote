@@ -5,7 +5,6 @@ import be.stepnote.member.repository.MemberRepository;
 import be.stepnote.report.favorite.WalkReportFavorite;
 import be.stepnote.report.favorite.WalkReportFavoriteRepository;
 import be.stepnote.report.image.WalkReportImage;
-import be.stepnote.report.WalkRouteFollowResponse;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
 import be.stepnote.report.comment.ReplyResponse;
@@ -114,18 +113,6 @@ public class WalkReportService {
             .imageUrls(report.getImages().stream()
                 .map(WalkReportImage::getUrl)
                 .toList())
-            .build();
-    }
-
-    public WalkRouteFollowResponse getRouteForFollow(Long reportId) {
-        WalkReport report = walkReportRepository.findById(reportId)
-            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
-
-        return WalkRouteFollowResponse.builder()
-            .reportId(report.getId())
-            .title(report.getTitle())
-            .content(report.getContent())
-            .authorNickname(report.getCreatedBy().getNickname())
             .build();
     }
 
