@@ -1,4 +1,4 @@
-package be.stepnote;
+package be.stepnote.config;
 
 import be.stepnote.config.ControllerConfig.TestUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
