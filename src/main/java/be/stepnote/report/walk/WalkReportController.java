@@ -52,6 +52,7 @@ public class WalkReportController {
     /**
      * 산책 리포트 조회
      * publicVisibility = true면 산책 리포트 공개 피드로 한것만 조회
+     *
      * publicVisibility = false면 산책 리포트 전체 조회
      */
     @GetMapping("/list")
@@ -74,9 +75,12 @@ public class WalkReportController {
         return ApiResponse.success(reports);
     }
 
+    /**
+     * 저장한 게시물( 즐겨찾기 )
+     */
 
     @GetMapping("/list/favorites")
-    public ResponseEntity<Slice<WalkReportSummaryResponse>> getMyFavorites(
+    public ApiResponse<SliceResponse<WalkReportSummaryResponse>> getMyFavorites(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "LATEST") String sort,
         @AuthenticationPrincipal CustomOAuth2User user
@@ -87,10 +91,10 @@ public class WalkReportController {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, sortOption);
 
-        Slice<WalkReportSummaryResponse> response =
-            walkReportService.getMyFavoriteReports(pageable, user.getUsername());
+        SliceResponse<WalkReportSummaryResponse> myFavoriteReports = walkReportService.getMyFavoriteReports(
+            pageable, user.getUsername());
 
-        return ResponseEntity.ok(response);
+        return ApiResponse.success(myFavoriteReports);
     }
 
     @GetMapping("/feed")

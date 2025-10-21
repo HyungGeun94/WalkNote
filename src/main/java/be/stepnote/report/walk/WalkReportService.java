@@ -79,13 +79,21 @@ public class WalkReportService {
         return walkReportSummaryResponseSliceResponse;
     }
 
-    public Slice<WalkReportSummaryResponse> getMyFavoriteReports(Pageable pageable,
+    public SliceResponse<WalkReportSummaryResponse> getMyFavoriteReports(Pageable pageable,
         String username) {
         Member member = memberRepository.findByUsername(username).orElseThrow();
 
         Slice<WalkReport> favorites = walkReportRepository.findMyFavorites(member, pageable);
 
-        return favorites.map(WalkReportSummaryResponse::new);
+        Slice<WalkReportSummaryResponse> map = favorites.map(WalkReportSummaryResponse::new);
+
+        List<WalkReportFavorite> byMember = walkReportFavoriteRepository.findByMember(member);
+        int size = byMember.size();
+
+
+        SliceResponse<WalkReportSummaryResponse> walkReportSliceResponse = SliceResponse.of(map, size);
+
+        return walkReportSliceResponse;
     }
 
     public List<WalkReportFeedResponse> getFeed(Pageable pageable, String username) {
