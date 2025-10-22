@@ -98,7 +98,11 @@ public class SecurityConfig {
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/login", "/", "/join","/test","/userTest","/ws/**","/ws-info"
                 ,"/login/**", "/oauth2/**","/error","/favicon.ico", "/apple-touch-icon.png", "/default-ui.css",
-                    "/css/**", "/js/**", "/images/**")
+                    "/css/**", "/js/**", "/images/**",
+                    "/swagger-ui/**", "/v3/api-docs/**",
+                    "/v3/api-docs.yaml",
+                    "/swagger-resources/**",
+                    "/webjars/**")
                 .permitAll()
 
                 .requestMatchers("/admin").hasRole("ADMIN")
