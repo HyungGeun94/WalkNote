@@ -19,16 +19,11 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final AuthMemberProvider authMemberProvider;
+
     public MemberInfoResponse userInfo() {
 
-        CustomOAuth2User user = (CustomOAuth2User) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-
-        String username = user.getUsername();
-
-        Optional<Member> byUsername = memberRepository.findByUsername(username);
-
-        Member member = byUsername.orElseThrow();
+        Member member = authMemberProvider.getCurrentMember();
 
         return MemberInfoResponse.from(member);
 

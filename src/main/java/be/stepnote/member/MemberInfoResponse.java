@@ -6,17 +6,17 @@ import lombok.Data;
 @Data
 public class MemberInfoResponse {
 
-    Long id;
-    String usernickname;
-    String profileImageUrl;
-    String bio;
+    private Long id;
+    private String nickname;
+    private String profileImageUrl;
+    private String bio;
 
     private MemberInfoResponse() {
     }
 
-    private MemberInfoResponse(Long id, String usernickname, String profileImageUrl, String bio) {
+    private MemberInfoResponse(Long id, String nickname, String profileImageUrl, String bio) {
         this.id = id;
-        this.usernickname = usernickname;
+        this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.bio = bio;
     }
@@ -24,7 +24,7 @@ public class MemberInfoResponse {
     public static MemberInfoResponse from(Member member) {
         MemberInfoResponse memberInfoResponse = new MemberInfoResponse();
         memberInfoResponse.setId(member.getId());
-        memberInfoResponse.setUsernickname(member.getNickname());
+        memberInfoResponse.setNickname(member.getNickname());
         memberInfoResponse.setProfileImageUrl(member.getProfileImageUrl());
         memberInfoResponse.setBio(member.getBio());
         return memberInfoResponse;
