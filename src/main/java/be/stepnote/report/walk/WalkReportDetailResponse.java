@@ -15,6 +15,8 @@ public class WalkReportDetailResponse {
 
     private Long id;
 
+    private String nickname;
+
     private List<String> images;
 
     private String title;
@@ -32,6 +34,7 @@ public class WalkReportDetailResponse {
 
     public WalkReportDetailResponse(WalkReport walkReport) {
         this.id = walkReport.getId();
+        this.nickname = walkReport.getCreatedBy().getNickname();
         this.images = walkReport.getImages().stream().map(WalkReportImage::getUrl).collect(
             Collectors.toList());
         this.title = walkReport.getTitle();
