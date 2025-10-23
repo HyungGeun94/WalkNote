@@ -1,6 +1,6 @@
 package be.stepnote.member;
 
-import be.stepnote.global.ApiResponse;
+import be.stepnote.global.response.ApiResponse;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

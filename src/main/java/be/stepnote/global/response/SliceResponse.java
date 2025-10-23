@@ -1,4 +1,4 @@
-package be.stepnote.global;
+package be.stepnote.global.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
