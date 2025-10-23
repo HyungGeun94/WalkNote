@@ -81,13 +81,12 @@ class WalkReportServiceTest {
             "날씨가 좋아요",
             "서울",
             "서울",
-            true,  // isPublic
             false, // isFavorite
             List.of("https://s3.amazonaws.com/img1.png")
         );
 
         // when
-        Long reportId = walkReportService.createReport(request);
+        Long reportId = walkReportService.createReport(request,"testUser22");
 
         // then
         WalkReport saved = walkReportRepository.findById(reportId).orElseThrow();
@@ -109,13 +108,12 @@ class WalkReportServiceTest {
             "좋은 코스였음",
             "서울",
             "서울",
-            true,  // isPublic
             true,  // isFavorite ✅
             List.of()
         );
 
         // when
-        Long reportId = walkReportService.createReport(request);
+        Long reportId = walkReportService.createReport(request,"testUser22");
 
         // then
         WalkReportFavorite favorite = walkReportFavoriteRepository.findAll().get(0);
