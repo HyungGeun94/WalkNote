@@ -14,4 +14,7 @@ public interface WalkReportFavoriteRepository extends JpaRepository<WalkReportFa
     List<Long> findReportIdsByMemberId(@Param("memberId") Long memberId);
 
     List<WalkReportFavorite> findByMember(Member member);
+
+    Long countByMember(Member member);
+
 }

@@ -25,6 +25,17 @@ public class MemberController {
 
     }
 
+    @GetMapping("/myPage/count")
+    public ApiResponse<MemberCountsResponse> getmyCount() {
+
+        MemberCountsResponse counts = memberService.getCounts();
+
+        return ApiResponse.success(counts);
+
+
+
+    }
+
     @PatchMapping("/myPage")
     public ApiResponse<Void> myProfileUpdate(@RequestBody MemberInfoUpdateRequest request) {
 
