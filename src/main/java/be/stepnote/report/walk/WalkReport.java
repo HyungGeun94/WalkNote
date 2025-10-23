@@ -36,22 +36,17 @@ public class WalkReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double distance;      // 총 거리
+    private double distance;
     private int steps;
-    private double calorie;       // 칼로리
+    private double calorie;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private long duration;        // 총 시간(분 단위)
+    private long duration;
 
     private String title;
 
     @Column(length = 1000)
     private String content;
-
-    @CreatedBy
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
-    private Member createdBy;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -63,13 +58,21 @@ public class WalkReport {
 
     private String endPoint;
 
-    private boolean isPublic; // 피드 업로드 유무
+    private boolean isPublic;
+
+    private boolean isStaticHide;
 
 
-    @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id",updatable = false)
+    private Member createdBy;
+
     @BatchSize(size = 10)
+    @OneToMany(mappedBy = "walkReport", cascade = ALL, orphanRemoval = true)
     private List<WalkReportImage> images = new ArrayList<>();
 
+
+    //생성 메서드
     public static WalkReport create(WalkReportRequest dto) {
         WalkReport report = new WalkReport();
         report.distance = dto.getDistance();
@@ -80,7 +83,6 @@ public class WalkReport {
         report.duration = dto.getDuration();
         report.title = dto.getTitle();
         report.content = dto.getContent();
-        report.isPublic = dto.isPublic();
         report.startPoint = dto.getStartPoint();
         report.endPoint = dto.getEndPoint();
 
@@ -95,12 +97,17 @@ public class WalkReport {
     }
 
     public void toggleVisibility() {
+
         this.isPublic = !this.isPublic;
     }
 
     public void addImage(WalkReportImage image) {
         image.addWalkReport(this);
         images.add(image);
+    }
+
+    public void createdBy(Member createdBy) {
+        this.createdBy = createdBy;
     }
 
     public void update(String title, String content, List<String> imageUrls) {

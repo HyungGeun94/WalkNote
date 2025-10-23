@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WalkReportRequest {
 
+
     private double distance;
     private int steps;
     private double calorie;
@@ -25,11 +26,7 @@ public class WalkReportRequest {
 
     private String endPoint;
 
-    @JsonProperty("isPublic")
-    private boolean isPublic;
-
-    @JsonProperty("isFavorite")
-    private boolean isFavorite;
+    private boolean favorite;
 
     private List<String> images;
 

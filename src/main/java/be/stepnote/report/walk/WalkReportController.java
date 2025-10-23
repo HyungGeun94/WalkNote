@@ -1,8 +1,8 @@
 package be.stepnote.report.walk;
 
 import be.stepnote.config.security.CustomOAuth2User;
-import be.stepnote.global.ApiResponse;
-import be.stepnote.global.SliceResponse;
+import be.stepnote.global.response.ApiResponse;
+import be.stepnote.global.response.SliceResponse;
 import be.stepnote.member.entity.Member;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
@@ -13,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,11 +42,14 @@ public class WalkReportController {
      * 산책 리포트 생성
      */
     @PostMapping
-    public ResponseEntity<Long> createReport(@RequestBody WalkReportRequest request
+    public ApiResponse<Long> createReport(
+        @RequestBody WalkReportRequest request,
+        @AuthenticationPrincipal CustomOAuth2User user
     ) {
-        Long reportId = walkReportService.createReport(request);
 
-        return ResponseEntity.ok(reportId);
+        Long reportId = walkReportService.createReport(request,user.getUsername());
+
+        return ApiResponse.success(reportId);
     }
 
 
@@ -97,6 +101,22 @@ public class WalkReportController {
         return ApiResponse.success(myFavoriteReports);
     }
 
+    /**
+     * 산책 리포트 상세
+     */
+    @GetMapping("/detail/{reportId}")
+    public ApiResponse<WalkReportDetailResponse> getReportDetail(
+
+        @PathVariable Long reportId
+
+    ) {
+
+        WalkReportDetailResponse walkReportDetailResponse = walkReportService.reportDetail(
+            reportId);
+
+        return ApiResponse.success(walkReportDetailResponse);
+    }
+
     @GetMapping("/feed")
     public List<WalkReportFeedResponse> getFeed(
         @AuthenticationPrincipal CustomOAuth2User user,
@@ -105,32 +125,39 @@ public class WalkReportController {
         return walkReportService.getFeed(pageable, user.getUsername());
     }
 
-    @PostMapping("/api/reports/{reportId}/public")
-    public ResponseEntity<Void> toggleVisibility(
+    @PatchMapping("/public/{reportId}")
+    public ApiResponse<Void> toggleVisibility(
         @AuthenticationPrincipal CustomOAuth2User user,
         @PathVariable Long reportId
     ) {
         walkReportService.toggleVisibility(user.getUsername(), reportId);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success(null);
     }
 
-    @PatchMapping("/api/reports/{id}")
-    public ResponseEntity<Void> updateReport(
+    /**
+     * 산책 리포트 수정
+     */
+
+    @PatchMapping("/edit/{id}")
+    public ApiResponse<Void> updateReport(
         @AuthenticationPrincipal CustomOAuth2User me,
         @PathVariable Long id,
         @RequestBody WalkReportUpdateRequest request
     ) {
         walkReportService.updateReport(me.getUsername(), id, request);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success(null);
     }
 
-    @GetMapping("/api/reports/{id}")
-    public ResponseEntity<WalkReportEditResponse> getReportForEdit(
+    /**
+     * 리포트 수정 전 권한요청 및 정보 주기
+     */
+    @GetMapping("/edit/{id}")
+    public ApiResponse<WalkReportDetailResponse> getReportForEdit(
         @AuthenticationPrincipal CustomOAuth2User me,
         @PathVariable Long id
     ) {
-        WalkReportEditResponse response = walkReportService.getReportForEdit(me.getUsername(), id);
-        return ResponseEntity.ok(response);
+        WalkReportDetailResponse response = walkReportService.getReportForEdit(me.getUsername(), id);
+        return ApiResponse.success(response);
     }
 
 
@@ -152,12 +179,16 @@ public class WalkReportController {
     public List<ReplyResponse> getReplies(@PathVariable Long parentId) {
         return walkReportService.getReplies(parentId);
     }
+
+    //    산책 리포트 삭제
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<Void> deleteReport(@PathVariable Long reportId,@AuthenticationPrincipal CustomOAuth2User user) {
+
+        walkReportService.deleteReport(reportId,user.getUsername());
+        return null;
+    }
 }
 
 
-//    산책 리포트 삭제
-//    @DeleteMapping
-//    public ResponseEntity<Void> deleteReport(@AuthenticationPrincipal CustomUserDetails user) {
-//        return null;
-//    }
+
 

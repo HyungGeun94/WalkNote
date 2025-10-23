@@ -1,11 +1,11 @@
 package be.stepnote.report.walk;
 
-import be.stepnote.global.SliceResponse;
+import be.stepnote.global.response.SliceResponse;
+import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
 import be.stepnote.report.favorite.WalkReportFavorite;
 import be.stepnote.report.favorite.WalkReportFavoriteRepository;
-import be.stepnote.report.image.WalkReportImage;
 import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
 import be.stepnote.report.comment.ReplyResponse;
@@ -33,19 +33,24 @@ public class WalkReportService {
     private final WalkReportFavoriteRepository walkReportFavoriteRepository;
     private final WalkReportFeedAssembler feedAssembler;
     private final WalkReportCommentRepository commentRepository;
+    private final AuthMemberProvider authMemberProvider;
 
-    public Long createReport(WalkReportRequest dto) {
+
+    public Long createReport(WalkReportRequest dto,String username) {
+
+        Member member = authMemberProvider.getMember(username);
 
         WalkReport walkReport = WalkReport.create(dto);
 
-        WalkReport saved = walkReportRepository.save(walkReport);
+        walkReport.createdBy(member);
+        walkReportRepository.save(walkReport);
 
         if (dto.isFavorite()) {
             WalkReportFavorite walkReportFavorite = WalkReportFavorite.create(walkReport);
             walkReportFavoriteRepository.save(walkReportFavorite);
         }
 
-        return saved.getId();
+        return walkReport.getId();
     }
 
     @Transactional(readOnly = true)
@@ -96,6 +101,18 @@ public class WalkReportService {
         return walkReportSliceResponse;
     }
 
+
+    public WalkReportDetailResponse reportDetail(Long reportId) {
+
+        WalkReport walkReport = walkReportRepository.findById(reportId).orElseThrow();
+
+        WalkReportDetailResponse walkReportDetailResponse = new WalkReportDetailResponse(
+            walkReport);
+
+        return walkReportDetailResponse;
+
+    }
+
     public List<WalkReportFeedResponse> getFeed(Pageable pageable, String username) {
         Member me = memberRepository.findByUsername(username)
             .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
@@ -128,7 +145,7 @@ public class WalkReportService {
 
     }
 
-    public WalkReportEditResponse getReportForEdit(String username, Long reportId) {
+    public WalkReportDetailResponse getReportForEdit(String username, Long reportId) {
         WalkReport report = walkReportRepository.findById(reportId)
             .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
 
@@ -136,13 +153,7 @@ public class WalkReportService {
             throw new AccessDeniedException("본인 게시글만 수정할 수 있습니다.");
         }
 
-        return WalkReportEditResponse.builder()
-            .title(report.getTitle())
-            .content(report.getContent())
-            .imageUrls(report.getImages().stream()
-                .map(WalkReportImage::getUrl)
-                .toList())
-            .build();
+        return new WalkReportDetailResponse(report);
     }
 
 
@@ -184,4 +195,15 @@ public class WalkReportService {
     }
 
 
+    public void deleteReport(Long reportId, String username) {
+
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        if (!report.getCreatedBy().getUsername().equals(username)) {
+            throw new AccessDeniedException("본인 게시글만 삭제할 수 있습니다.");
+        }
+
+        walkReportRepository.deleteById(reportId);
+    }
 }
