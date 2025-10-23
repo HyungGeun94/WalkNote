@@ -4,6 +4,9 @@ import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +42,9 @@ public class WebSocketMessage implements WebSocketConfigurer {
     // 내부 핸들러 정의
     private static class SimpleWebSocketHandler extends TextWebSocketHandler {
 
+//        사용자 세션에 넣기
+//        private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
+
         private final ObjectMapper objectMapper;
         private final MemberRepository memberRepository;
 
@@ -49,6 +55,8 @@ public class WebSocketMessage implements WebSocketConfigurer {
 
         @Override
         public void afterConnectionEstablished(WebSocketSession session) {
+//            사용자 세션에 넣기
+//            sessions.add(session);
             log.info("✅ 연결됨: {}", session.getId());
 
         }
@@ -75,10 +83,17 @@ public class WebSocketMessage implements WebSocketConfigurer {
 
             log.info("📤 보낸 메시지: {}", response);
 
+//            세션에 유지중인 사용자 모두에게 메시지 전달
+//            for (WebSocketSession webSocketSession : sessions) {
+//                webSocketSession.sendMessage(new TextMessage(response));
+//            }
+
         }
 
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+//            연결종료될 때 제거
+//            sessions.remove(session);
             log.info("❌ 연결 종료: {}", session.getId());
         }
     }
