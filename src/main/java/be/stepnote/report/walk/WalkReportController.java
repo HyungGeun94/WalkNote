@@ -117,6 +117,12 @@ public class WalkReportController {
         return ApiResponse.success(walkReportDetailResponse);
     }
 
+    @GetMapping("/authCheck/{reportId}")
+    public ApiResponse<Boolean> authCheck(@PathVariable Long reportId) {
+
+        return ApiResponse.success(walkReportService.authCeheck(reportId));
+    }
+
     @GetMapping("/feed")
     public List<WalkReportFeedResponse> getFeed(
         @AuthenticationPrincipal CustomOAuth2User user,
@@ -182,10 +188,10 @@ public class WalkReportController {
 
     //    산책 리포트 삭제
     @DeleteMapping("/{reportId}")
-    public ResponseEntity<Void> deleteReport(@PathVariable Long reportId,@AuthenticationPrincipal CustomOAuth2User user) {
+    public ApiResponse<?> deleteReport(@PathVariable Long reportId) {
 
-        walkReportService.deleteReport(reportId,user.getUsername());
-        return null;
+        walkReportService.deleteReport(reportId);
+        return ApiResponse.success(null);
     }
 }
 

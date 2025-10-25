@@ -29,7 +29,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class WalkReport {
 
     @Id
@@ -48,11 +47,9 @@ public class WalkReport {
     @Column(length = 1000)
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     private String startPoint;
 
@@ -61,6 +58,8 @@ public class WalkReport {
     private boolean isPublic;
 
     private boolean isStaticHide;
+
+    private boolean active = true;
 
 
     @ManyToOne(fetch = LAZY)
@@ -99,6 +98,10 @@ public class WalkReport {
     public void toggleVisibility() {
 
         this.isPublic = !this.isPublic;
+    }
+
+    public void changeActive() {
+        this.active = false;
     }
 
     public void addImage(WalkReportImage image) {

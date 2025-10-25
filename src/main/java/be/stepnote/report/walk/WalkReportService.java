@@ -14,6 +14,7 @@ import be.stepnote.report.comment.WalkReportCommentRepository;
 import be.stepnote.report.feed.WalkReportFeedAssembler;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -195,15 +196,36 @@ public class WalkReportService {
     }
 
 
-    public void deleteReport(Long reportId, String username) {
+    public void deleteReport(Long reportId) {
+
+        Member member = authMemberProvider.getCurrentMember();
 
         WalkReport report = walkReportRepository.findById(reportId)
             .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
 
-        if (!report.getCreatedBy().getUsername().equals(username)) {
+        if (!report.getCreatedBy().getUsername().equals(member.getUsername())) {
             throw new AccessDeniedException("본인 게시글만 삭제할 수 있습니다.");
         }
 
-        walkReportRepository.deleteById(reportId);
+        report.changeActive();
+
+
+
+
+    }
+
+    public boolean authCeheck(Long reportId) {
+
+        Member member = authMemberProvider.getCurrentMember();
+
+        Optional<WalkReport> byId = walkReportRepository.findById(reportId);
+
+        WalkReport walkReport = byId.orElseThrow();
+
+
+        return walkReport.getCreatedBy().getUsername().equals(member.getUsername());
+
+
+
     }
 }
