@@ -134,11 +134,12 @@ public class WalkReportService {
         report.toggleVisibility();
     }
 
-    public void updateReport(String username, Long reportId, WalkReportUpdateRequest request) {
+    public void updateReport(Long reportId, WalkReportUpdateRequest request) {
         WalkReport report = walkReportRepository.findById(reportId)
             .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
 
-        if (!report.getCreatedBy().getUsername().equals(username)) {
+        Member member = authMemberProvider.getCurrentMember();
+        if (!report.getCreatedBy().getUsername().equals(member.getUsername())) {
             throw new AccessDeniedException("본인 게시글만 수정할 수 있습니다.");
         }
 

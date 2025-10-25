@@ -146,11 +146,10 @@ public class WalkReportController {
 
     @PatchMapping("/edit/{id}")
     public ApiResponse<Void> updateReport(
-        @AuthenticationPrincipal CustomOAuth2User me,
         @PathVariable Long id,
         @RequestBody WalkReportUpdateRequest request
     ) {
-        walkReportService.updateReport(me.getUsername(), id, request);
+        walkReportService.updateReport(id, request);
         return ApiResponse.success(null);
     }
 
