@@ -101,7 +101,7 @@ Controller → Service → Repository → Entity
 - `@WebMvcTest` : Controller API 검증
 - `@DataJpaTest` : Repository 쿼리 검증
 - `@SpringBootTest` : 통합 시나리오 검증
-- `MockitoExtension` / `ArgumentCaptor` 기반 단위 테스트
+- `MockitoExtension` : 서비스 , 도메인 검증
 
 ---
 
