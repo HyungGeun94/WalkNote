@@ -131,14 +131,6 @@ public class WalkReportController {
         return walkReportService.getFeed(pageable, user.getUsername());
     }
 
-    @PatchMapping("/public/{reportId}")
-    public ApiResponse<Void> toggleVisibility(
-        @AuthenticationPrincipal CustomOAuth2User user,
-        @PathVariable Long reportId
-    ) {
-        walkReportService.toggleVisibility(user.getUsername(), reportId);
-        return ApiResponse.success(null);
-    }
 
     /**
      * 산책 리포트 수정

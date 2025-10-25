@@ -123,16 +123,6 @@ public class WalkReportService {
         return feedAssembler.assemble(reports, me);
     }
 
-    public void toggleVisibility(String userName, Long reportId) {
-        WalkReport report = walkReportRepository.findById(reportId)
-            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
-
-        if (!report.getCreatedBy().getUsername().equals(userName)) {
-            throw new AccessDeniedException("본인 리포트만 공개 상태를 변경할 수 있습니다.");
-        }
-
-        report.toggleVisibility();
-    }
 
     public void updateReport(Long reportId, WalkReportUpdateRequest request) {
         WalkReport report = walkReportRepository.findById(reportId)
