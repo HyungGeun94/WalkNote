@@ -123,6 +123,8 @@ Controller → Service → Repository → Entity
 <br>
 QueryDSL로 쿼리를 다루며 SQL 감각을 되살렸고,
 비동기 이벤트와 알림 구조를 실험하며 백엔드의 리듬에 조금 더 익숙해졌습니다.
+ 
+
 ---
 
 <p align="center"><i>© 2025 Stepnote Project</i></p>
