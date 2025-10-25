@@ -95,11 +95,6 @@ public class WalkReport {
         return report;
     }
 
-    public void toggleVisibility() {
-
-        this.isPublic = !this.isPublic;
-    }
-
     public void changeActive() {
         this.active = false;
     }
@@ -120,6 +115,15 @@ public class WalkReport {
             this.images.clear();
             imageUrls.forEach(url -> this.addImage(new WalkReportImage(url)));
         }
+    }
+
+    public void upload(String title, String content, List<String> imageUrls,boolean isPublic,boolean isStaticHide) {
+
+        update(title, content, imageUrls);
+        this.isPublic = isPublic;
+        this.isStaticHide = isStaticHide;
+
+
     }
 
 

@@ -157,6 +157,16 @@ public class WalkReportController {
         return ApiResponse.success(response);
     }
 
+    @PatchMapping("/upload/{reportId}")
+    public ApiResponse<Void> uploadReport(
+        @PathVariable Long reportId,
+        @RequestBody WalkReportUploadRequest walkReportUploadRequest
+    ){
+        walkReportService.uploadRort(reportId, walkReportUploadRequest);
+
+        return ApiResponse.success(null);
+    }
+
 
     // 댓글 작성 (root or reply 모두 처리)
     @PostMapping("/reply")

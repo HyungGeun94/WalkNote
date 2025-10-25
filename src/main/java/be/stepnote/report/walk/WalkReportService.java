@@ -219,4 +219,25 @@ public class WalkReportService {
 
 
     }
+
+    public void uploadRort(Long reportId, WalkReportUploadRequest request) {
+
+
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        Member member = authMemberProvider.getCurrentMember();
+        if (!report.getCreatedBy().getUsername().equals(member.getUsername())) {
+            throw new AccessDeniedException("본인 게시글만 수정할 수 있습니다.");
+        }
+
+        report.upload(request.getTitle(), request.getContent(), request.getImageUrls(),
+            request.isPublicStatus(), request.isStaticHideStatus());
+
+
+
+
+
+
+    }
 }

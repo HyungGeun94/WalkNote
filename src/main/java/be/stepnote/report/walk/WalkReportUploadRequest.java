@@ -1,15 +1,15 @@
 package be.stepnote.report.walk;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
-public class WalkReportEditResponse {
+@NoArgsConstructor
+public class WalkReportUploadRequest {
     private String title;
     private String content;
     private List<String> imageUrls;
+    private boolean publicStatus;
+    private boolean staticHideStatus;
 }
