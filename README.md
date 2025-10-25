@@ -2,18 +2,18 @@
   <br>
   <img src="https://github.com/user-attachments/assets/STEPLOGO_TEMP.png" alt="Stepnote Logo" width="200" />
   <p>
-  Stepnote (WalkNote)
+  WalkNote
   <p>
 </h1>
-<h4 align="center">도메인 이벤트 기반 산책 기록 공유 플랫폼</h4>
+<h4 align="center">산책 기록 공유 플랫폼</h4>
 
 ---
 
 ## 📘 프로젝트 개요
 
 > 사용자의 산책 기록을 공유하고, 실시간 알림과 피드 조합을 통해 **함께 걷는 경험을 제공하는 커뮤니티형 기록 플랫폼**입니다.  
-> Firebase FCM, WebSocket, Domain Event 등 다양한 비동기 통신 구조를 실험하며,  
-> **객체지향적 영속성 관리와 SQL스러운 조회 전략**의 균형을 추구합니다.
+> Firebase FCM, WebSocket, Domain Event 등 다양한 비동기 통신 구조를 실험하였으며,  
+객체지향적 설계와 효율적인 데이터 조회 전략을 함께 고민했습니다.
 
 ---
 
@@ -63,7 +63,6 @@
 ### ❤️ 피드 (Feed Assembler)
 - `WalkReport` 기준 ID 페이징 + IN 조회
 - 좋아요, 즐겨찾기, 팔로우 여부 집계 후 DTO 조립
-- “조회는 SQL스럽게, 조립은 자바스럽게” 구조 적용
 
 ### 🧍 팔로우 / 즐겨찾기
 - 단방향 관계 유지, 별도 Repository에서 exists/IN 조회
@@ -81,7 +80,6 @@ Controller → Service → Repository → Entity
 - 단방향 중심 매핑, OneToMany Fetch Join 금지
 - @BatchSize / IN 조회로 N+1 최소화
 - 트랜잭션은 Service 계층에서 관리
-- DTO 프로젝션 기반 데이터 조립
 
 ---
 
@@ -119,9 +117,12 @@ Controller → Service → Repository → Entity
 ---
 
 ## 💭 회고 (작성 예정)
-> “Stepnote는 객체지향적 설계와 데이터 중심 최적화를 조화시키려는 첫 시도였다.”  
-> “실시간성과 안정성을 동시에 추구한 도전의 기록.”
-
+>도메인을 직접 설계하면서 JPA와 트랜잭션의 감을 몸으로 익혔고,
+테스트 코드를 통해 로직이 흘러가는 길을 따라가 보며 안정감을 쌓았습니다.
+<br>
+<br>
+QueryDSL로 쿼리를 다루며 SQL 감각을 되살렸고,
+비동기 이벤트와 알림 구조를 실험하며 백엔드의 리듬에 조금 더 익숙해졌습니다.
 ---
 
 <p align="center"><i>© 2025 Stepnote Project</i></p>
