@@ -118,7 +118,7 @@ Controller → Service → Repository → Entity
 
 ## 💭 회고 (작성 예정)
 >도메인을 직접 설계하면서 JPA와 트랜잭션의 감을 몸으로 익혔고,
-<br>
+> <br>
 테스트 코드를 통해 로직이 흘러가는 길을 따라가 보며 안정감을 쌓았습니다.
 > <br>
 > QueryDSL로 쿼리를 다루며 SQL 감각을 되살렸고,
