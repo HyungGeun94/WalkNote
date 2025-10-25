@@ -23,6 +23,7 @@ public class WalkReportSummaryResponse {
     private LocalDateTime createdAt;
     private String startPoint;
     private String endPoint;
+    private boolean isPublic;
 
 
     public WalkReportSummaryResponse(WalkReport walkReport) {
@@ -37,5 +38,6 @@ public class WalkReportSummaryResponse {
         this.createdAt = walkReport.getCreatedAt();
         this.startPoint = walkReport.getStartPoint();
         this.endPoint = walkReport.getEndPoint();
+        this.isPublic = walkReport.isPublic();
     }
 }
