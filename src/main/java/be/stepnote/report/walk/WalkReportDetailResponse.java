@@ -32,6 +32,11 @@ public class WalkReportDetailResponse {
     private int steps;
     private double calorie;
 
+    private boolean favorite;
+    private boolean like;
+    private boolean staticHide;
+
+
     public WalkReportDetailResponse(WalkReport walkReport) {
         this.id = walkReport.getId();
         this.nickname = walkReport.getCreatedBy().getNickname();
@@ -47,5 +52,12 @@ public class WalkReportDetailResponse {
         this.duration = walkReport.getDuration();
         this.steps = walkReport.getSteps();
         this.calorie = walkReport.getCalorie();
+        this.staticHide = walkReport.isStaticHide();
+    }
+
+    public WalkReportDetailResponse(WalkReport walkReport, Boolean isLike, Boolean isFavorite) {
+        this(walkReport);
+        like = isLike;
+        favorite = isFavorite;
     }
 }

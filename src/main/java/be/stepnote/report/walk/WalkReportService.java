@@ -13,6 +13,7 @@ import be.stepnote.report.comment.WalkReportComment;
 import be.stepnote.report.comment.WalkReportCommentRepository;
 import be.stepnote.report.feed.WalkReportFeedAssembler;
 import be.stepnote.report.feed.WalkReportFeedResponse;
+import be.stepnote.report.like.WalkReportLikeRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class WalkReportService {
     private final WalkReportFeedAssembler feedAssembler;
     private final WalkReportCommentRepository commentRepository;
     private final AuthMemberProvider authMemberProvider;
+    private final WalkReportLikeRepository walkReportLikeRepository;
 
 
     public Long createReport(WalkReportRequest dto,String username) {
@@ -107,8 +109,16 @@ public class WalkReportService {
 
         WalkReport walkReport = walkReportRepository.findById(reportId).orElseThrow();
 
+        Member member = authMemberProvider.getCurrentMember();
+
+
+        Boolean isLike = walkReportLikeRepository.existsByWalkReportAndMember(walkReport,member).orElse(false);
+        Boolean isFavorite = walkReportFavoriteRepository.existsByWalkReportAndMember(walkReport, member)
+            .orElse(false);
+
         WalkReportDetailResponse walkReportDetailResponse = new WalkReportDetailResponse(
-            walkReport);
+            walkReport,isLike,isFavorite);
+
 
         return walkReportDetailResponse;
 

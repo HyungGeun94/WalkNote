@@ -1,7 +1,9 @@
 package be.stepnote.report.favorite;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.report.walk.WalkReport;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +19,5 @@ public interface WalkReportFavoriteRepository extends JpaRepository<WalkReportFa
 
     Long countByMember(Member member);
 
+    Optional<Boolean> existsByWalkReportAndMember(WalkReport walkReport, Member member);
 }
