@@ -3,13 +3,13 @@ package be.stepnote.report.walk.dto;
 import be.stepnote.report.walk.entity.WalkReport;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class WalkReportSummaryResponse {
 
@@ -26,6 +26,23 @@ public class WalkReportSummaryResponse {
     private String endPoint;
     private boolean isPublic;
 
+    @Builder
+    public WalkReportSummaryResponse(Long id, String title, String image, double distance,
+        long duration, int steps, LocalDateTime startTime, LocalDateTime endTime,
+        LocalDateTime createdAt, String startPoint, String endPoint, boolean isPublic) {
+        this.id = id;
+        this.title = title;
+        this.image = image;
+        this.distance = distance;
+        this.duration = duration;
+        this.steps = steps;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.createdAt = createdAt;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.isPublic = isPublic;
+    }
 
     public WalkReportSummaryResponse(WalkReport walkReport) {
         this.id = walkReport.getId();

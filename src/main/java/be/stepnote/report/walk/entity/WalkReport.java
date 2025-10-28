@@ -68,31 +68,29 @@ public class WalkReport {
 
 
     //생성 메서드
-    public static WalkReport create(WalkReportRequest dto) {
+    public static WalkReport create(
+        double distance, int steps, double calorie,
+        LocalDateTime startTime, LocalDateTime endTime,
+        long duration, String title, String content,
+        String startPoint, String endPoint, List<String> imageUrls
+    ) {
         WalkReport report = new WalkReport();
-        report.distance = dto.getDistance();
-        report.steps = dto.getSteps();
-        report.calorie = dto.getCalorie();
-        report.startTime = dto.getStartTime();
-        report.endTime = dto.getEndTime();
-        report.duration = dto.getDuration();
-        report.title = dto.getTitle();
-        report.content = dto.getContent();
-        report.startPoint = dto.getStartPoint();
-        report.endPoint = dto.getEndPoint();
+        report.distance = distance;
+        report.steps = steps;
+        report.calorie = calorie;
+        report.startTime = startTime;
+        report.endTime = endTime;
+        report.duration = duration;
+        report.title = title;
+        report.content = content;
+        report.startPoint = startPoint;
+        report.endPoint = endPoint;
 
-        // 이미지 추가
-        if (dto.getImages() != null) {
-            dto.getImages().forEach(url ->
-                report.addImage(new WalkReportImage(url))
-            );
+        if (imageUrls != null) {
+            imageUrls.forEach(url -> report.addImage(new WalkReportImage(url)));
         }
 
         return report;
-    }
-
-    public void changeActive() {
-        this.active = false;
     }
 
     public void addImage(WalkReportImage image) {
@@ -104,6 +102,11 @@ public class WalkReport {
         this.createdBy = createdBy;
     }
 
+    public void changeActive() {
+        this.active = false;
+    }
+
+
     public void update(String title, String content, List<String> imageUrls) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
@@ -111,6 +114,7 @@ public class WalkReport {
             this.images.clear();
             imageUrls.forEach(url -> this.addImage(new WalkReportImage(url)));
         }
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void upload(String title, String content, List<String> imageUrls,boolean isPublic,boolean isStaticHide) {
@@ -122,11 +126,11 @@ public class WalkReport {
 
     }
 
-
     public String findFirstImageUrl() {
         if (images == null || images.isEmpty()) {
             return null;
         }
         return images.get(0).getUrl();
     }
+
 }
