@@ -24,6 +24,10 @@ public class AuthMemberProvider {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof CustomOAuth2User user) {
             return getMember(user.getUsername());
+        }else if (principal instanceof org.springframework.security.core.userdetails.User user) {
+            return getMember(user.getUsername());
+        } else if (principal instanceof String username) {
+            return getMember(username);
         }
         throw new IllegalStateException("인증된 사용자 정보가 없습니다.");
     }

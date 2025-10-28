@@ -17,16 +17,22 @@ public class ExceptionHandle {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<?> handleValidationException(MethodArgumentNotValidException e) {
-
-        HttpStatusCode statusCode = e.getStatusCode();
-
-        String message = e.getBindingResult().getFieldErrors().stream()
+    public ResponseEntity<ApiResponse<?>> handleValidationException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
             .findFirst()
             .map(error -> error.getDefaultMessage())
             .orElse("잘못된 요청입니다.");
 
-        return ApiResponse.error(HttpStatus.BAD_REQUEST, message);
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null) status = HttpStatus.BAD_REQUEST;
+
+        // 3. ApiResponse 생성
+        ApiResponse<?> body = ApiResponse.error(status, message);
+
+        // 4. ResponseEntity로 래핑하여 상태 코드 명시
+        return ResponseEntity
+            .status(status)
+            .body(body);
     }
 
     // 1) Member 도메인에서 던진 예외 처리
@@ -60,15 +66,25 @@ public class ExceptionHandle {
 
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ApiResponse<?> handleEmailDuplicate(EmailAlreadyExistsException e) {
-        return ApiResponse.error(HttpStatus.BAD_REQUEST, "이메일이 이미존재합니다");
+    public ResponseEntity<ApiResponse<?>> handleEmailDuplicate(EmailAlreadyExistsException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ApiResponse<?> body = ApiResponse.error(status, "이메일이 이미 존재합니다.");
+
+        return ResponseEntity
+            .status(status)
+            .body(body);
     }
 
-    @ExceptionHandler
-    public ApiResponse<?> handleException(Exception e) {
-        log.error("❌ 예외 발생", e);  // 전체 스택 트레이스 출력
-        return ApiResponse.error(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
+        log.error(" 예외 발생", e); // 전체 스택 트레이스 로깅
 
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ApiResponse<?> body = ApiResponse.error(status, "잘못된 요청입니다.");
+
+        return ResponseEntity
+            .status(status)
+            .body(body);
     }
 
 

@@ -48,13 +48,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             String role = jwtUtil.getRole(token);
 
             // 4️⃣ UserEntity 흉내 (JWT에서만 얻은 최소 정보)
-            Member member = Member
-                .builder()
-                .username(username)
-                .role(role)
-                .password("temppasworddd")
-                .nickname(UUID.randomUUID().toString())
-                .build();
+
+            Member member = Member.create(username, UUID.randomUUID().toString());
 
             // 5️⃣ WebSocket 세션 attributes에 저장
             // (이후 handleTextMessage()에서 session.getAttributes()로 꺼냄)
