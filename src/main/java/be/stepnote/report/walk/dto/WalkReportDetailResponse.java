@@ -1,6 +1,7 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.dto;
 
 import be.stepnote.report.image.WalkReportImage;
+import be.stepnote.report.walk.entity.WalkReport;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

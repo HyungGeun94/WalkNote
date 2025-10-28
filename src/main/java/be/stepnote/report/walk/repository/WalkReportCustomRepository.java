@@ -1,6 +1,7 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.repository;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.report.walk.entity.WalkReport;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

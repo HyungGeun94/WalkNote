@@ -1,4 +1,4 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.dto;
 
 import java.util.List;
 import lombok.Getter;

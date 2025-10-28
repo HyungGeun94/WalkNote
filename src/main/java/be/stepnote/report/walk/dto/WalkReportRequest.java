@@ -1,6 +1,5 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package be.stepnote.report.like;
 
 import be.stepnote.member.entity.Member;
-import be.stepnote.report.walk.WalkReport;
+import be.stepnote.report.walk.entity.WalkReport;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

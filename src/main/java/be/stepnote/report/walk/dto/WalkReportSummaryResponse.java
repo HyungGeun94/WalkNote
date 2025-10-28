@@ -1,5 +1,6 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.dto;
 
+import be.stepnote.report.walk.entity.WalkReport;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;

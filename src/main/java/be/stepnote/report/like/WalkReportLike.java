@@ -3,7 +3,7 @@ package be.stepnote.report.like;
 import static jakarta.persistence.FetchType.*;
 
 import be.stepnote.member.entity.Member;
-import be.stepnote.report.walk.WalkReport;
+import be.stepnote.report.walk.entity.WalkReport;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
