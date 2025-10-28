@@ -1,4 +1,4 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.service;
 
 import be.stepnote.global.response.SliceResponse;
 import be.stepnote.member.AuthMemberProvider;
@@ -14,7 +14,16 @@ import be.stepnote.report.comment.WalkReportCommentRepository;
 import be.stepnote.report.feed.WalkReportFeedAssembler;
 import be.stepnote.report.feed.WalkReportFeedResponse;
 import be.stepnote.report.like.WalkReportLikeRepository;
+import be.stepnote.report.walk.dto.WalkReportSearchCondition;
+import be.stepnote.report.walk.dto.WalkReportSummaryResponse;
+import be.stepnote.report.walk.dto.WalkReportUpdateRequest;
+import be.stepnote.report.walk.dto.WalkReportUploadRequest;
+import be.stepnote.report.walk.dto.WalkReportDetailResponse;
+import be.stepnote.report.walk.dto.WalkReportRequest;
+import be.stepnote.report.walk.entity.WalkReport;
+import be.stepnote.report.walk.repository.WalkReportRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +48,24 @@ public class WalkReportService {
     private final WalkReportLikeRepository walkReportLikeRepository;
 
 
-    public Long createReport(WalkReportRequest dto,String username) {
+    public Long createReport(WalkReportRequest dto) {
 
-        Member member = authMemberProvider.getMember(username);
+        Member member = authMemberProvider.getCurrentMember();
 
-        WalkReport walkReport = WalkReport.create(dto);
+        WalkReport walkReport = WalkReport.create(
+            dto.getDistance(),
+            dto.getSteps(),
+            dto.getCalorie(),
+            dto.getStartTime(),
+            dto.getEndTime(),
+            dto.getDuration(),
+            dto.getTitle(),
+            dto.getContent(),
+            dto.getStartPoint(),
+            dto.getEndPoint(),
+            dto.getImages()
+        );
+
 
         walkReport.createdBy(member);
         walkReportRepository.save(walkReport);
@@ -57,18 +79,20 @@ public class WalkReportService {
     }
 
     @Transactional(readOnly = true)
-    public SliceResponse<WalkReportSummaryResponse> getReports(Pageable pageable, String username,
-        boolean publicVisibility) {
-        Member member = memberRepository.findByUsername(username).orElseThrow();
+    public SliceResponse<WalkReportSummaryResponse> getReports(WalkReportSearchCondition condition) {
+
+//        Pageable pageable,
+//        boolean publicVisibility
+        Member member = authMemberProvider.getCurrentMember();
 
         Slice<WalkReport> walkReports = walkReportRepository.findReportSummaries(member,
-            pageable, publicVisibility);
+            condition.toPageable(), condition.isPublicVisibility());
 
         Integer count = 0;
 
-        if(publicVisibility) {
+        if(condition.isPublicVisibility()) {
             List<WalkReport> byCreatedByAndPublicIsTrue = walkReportRepository.findByCreatedByAndIsPublic(
-                member, publicVisibility);
+                member, condition.isPublicVisibility());
 
             count = byCreatedByAndPublicIsTrue.size();
         }
@@ -87,11 +111,10 @@ public class WalkReportService {
         return walkReportSummaryResponseSliceResponse;
     }
 
-    public SliceResponse<WalkReportSummaryResponse> getMyFavoriteReports(Pageable pageable,
-        String username) {
-        Member member = memberRepository.findByUsername(username).orElseThrow();
+    public SliceResponse<WalkReportSummaryResponse> getMyFavoriteReports(WalkReportSearchCondition condition) {
+        Member member = authMemberProvider.getCurrentMember();
 
-        Slice<WalkReport> favorites = walkReportRepository.findMyFavorites(member, pageable);
+        Slice<WalkReport> favorites = walkReportRepository.findMyFavorites(member, condition.toPageable());
 
         Slice<WalkReportSummaryResponse> map = favorites.map(WalkReportSummaryResponse::new);
 
@@ -107,7 +130,8 @@ public class WalkReportService {
 
     public WalkReportDetailResponse reportDetail(Long reportId) {
 
-        WalkReport walkReport = walkReportRepository.findById(reportId).orElseThrow();
+        WalkReport walkReport = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
 
         Member member = authMemberProvider.getCurrentMember();
 
@@ -122,6 +146,19 @@ public class WalkReportService {
 
         return walkReportDetailResponse;
 
+    }
+
+    public WalkReportDetailResponse getReportForEdit(Long reportId) {
+        WalkReport report = walkReportRepository.findById(reportId)
+            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        Member member = authMemberProvider.getCurrentMember();
+
+        if (!report.getCreatedBy().getUsername().equals(member.getUsername())) {
+            throw new AccessDeniedException("본인 게시글만 수정할 수 있습니다.");
+        }
+
+        return new WalkReportDetailResponse(report);
     }
 
     public List<WalkReportFeedResponse> getFeed(Pageable pageable, String username) {
@@ -147,16 +184,7 @@ public class WalkReportService {
 
     }
 
-    public WalkReportDetailResponse getReportForEdit(String username, Long reportId) {
-        WalkReport report = walkReportRepository.findById(reportId)
-            .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
 
-        if (!report.getCreatedBy().getUsername().equals(username)) {
-            throw new AccessDeniedException("본인 게시글만 수정할 수 있습니다.");
-        }
-
-        return new WalkReportDetailResponse(report);
-    }
 
 
     public void replyCreate(Member author, CommentRequest request) {
@@ -174,16 +202,22 @@ public class WalkReportService {
         }
     }
 
-    public List<CommentResponse> getRootComments(Long reportId, Pageable pageable) {
+    public SliceResponse<CommentResponse> getRootComments(Long reportId, Pageable pageable) {
         WalkReport report = walkReportRepository.findById(reportId)
             .orElseThrow(() -> new IllegalArgumentException("리포트 없음"));
 
-        List<WalkReportComment> roots = commentRepository
-            .findByWalkReportAndParentIsNullOrderByCreatedAtDesc(report, pageable);
+        Slice<WalkReportComment> slice = commentRepository
+            .findByWalkReportAndParentIsNull(report, pageable);
 
-        return roots.stream()
-            .map(c -> CommentResponse.from(c, commentRepository.countByParent(c)))
-            .toList();
+        Map<Long, Long> longLongMap = commentRepository.countCommentsByReportIds(List.of(reportId));
+
+        int count = longLongMap.getOrDefault(reportId,0L).intValue();
+
+        Slice<CommentResponse> map = slice.map(s -> CommentResponse.from(s,commentRepository.countByParent(s)));
+
+        SliceResponse<CommentResponse> commentResponseSliceResponse = SliceResponse.of(map, count);
+
+        return commentResponseSliceResponse;
     }
 
     public List<ReplyResponse> getReplies(Long parentId) {
