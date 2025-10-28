@@ -1,4 +1,4 @@
-package be.stepnote.member;
+package be.stepnote.member.dto;
 
 import be.stepnote.member.entity.Member;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class MemberInfoResponse {
     private MemberInfoResponse() {
     }
 
-    private MemberInfoResponse(Long id, String nickname, String profileImageUrl, String bio) {
+    public MemberInfoResponse(Long id, String nickname, String profileImageUrl, String bio) {
         this.id = id;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;

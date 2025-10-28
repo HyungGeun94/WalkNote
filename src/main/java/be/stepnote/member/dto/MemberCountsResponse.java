@@ -1,4 +1,4 @@
-package be.stepnote.member;
+package be.stepnote.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -2,7 +2,6 @@ package be.stepnote.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,10 +10,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
@@ -25,17 +20,19 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    폼 로그인 및 소셜로그인 할 때 고유id에 해당
-    @Column(unique = true, nullable = true)
+    // 폼 로그인 및 소셜로그인 할 때 고유id에 해당
+    @Column(unique = true, nullable = false)
     private String username;
 
     private String profileImageUrl;
 
     private String bio;
 
-    @Column(unique = true, nullable = true)
+    // 유저가 설정한 닉네임
+    @Column(unique = true, nullable = false)
     private String nickname;
 
+    // 실명
     private String name;
 
     private String email;
@@ -44,23 +41,32 @@ public class Member {
 
     private String role;
 
+    // 유저 개인 fcm알람을 위한 토큰 저장
     private String fcmToken;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
+//    @Builder(access = AccessLevel.PRIVATE) -> 점진적 도입
     @Builder
-    public Member(String username, String role, String password,String nickname,String email, String profileImageUrl
-    , String bio, String name) {
+    private Member(String username, String role, String nickname,String email,String profileImageUrl, String name,String password) {
         this.username = username;
-        this.role = role;
-        this.password = password;
         this.nickname = nickname;
+        this.role = role;
         this.email = email;
-        this.name = name;
-        this.bio = bio;
         this.profileImageUrl = profileImageUrl;
+        this.name = name;
+        this.password = password;
+    }
+
+    //  내부 전용 팩토리 메서드
+    public static Member create(String username, String nickname) {
+        return Member.builder()
+            .username(username)
+            .nickname(nickname)
+            .role("ROLE_USER")
+            .build();
     }
 
     public void updateFcmToken(String token) {
@@ -68,9 +74,16 @@ public class Member {
     }
 
     public void updatePartial(String bio, String nickname, String imageUrl) {
-        if (hasText(bio)) this.bio = bio;
-        if (hasText(nickname)) this.nickname = nickname;
-        if (hasText(imageUrl)) this.profileImageUrl = imageUrl;
+        if (hasText(bio)) {
+            this.bio = bio;
+        }
+        if (hasText(nickname)) {
+            this.nickname = nickname;
+        }
+        if (hasText(imageUrl)) {
+            this.profileImageUrl = imageUrl;
+        }
+        this.updatedAt = LocalDateTime.now();
     }
 
     private boolean hasText(String s) {

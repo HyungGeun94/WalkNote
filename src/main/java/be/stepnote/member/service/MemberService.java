@@ -1,12 +1,12 @@
-package be.stepnote.member;
+package be.stepnote.member.service;
 
-import be.stepnote.config.security.CustomOAuth2User;
 import be.stepnote.follow.FollowRepository;
+import be.stepnote.member.AuthMemberProvider;
+import be.stepnote.member.dto.MemberCountsResponse;
+import be.stepnote.member.dto.MemberInfoResponse;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
-import be.stepnote.member.repository.MemberRepository;
 import be.stepnote.report.favorite.WalkReportFavoriteRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,13 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
-
     private final AuthMemberProvider authMemberProvider;
 
     private final WalkReportFavoriteRepository walkReportFavoriteRepository;
 
     private final FollowRepository followRepository;
+
+
 
     public MemberInfoResponse userInfo() {
 
@@ -37,21 +37,14 @@ public class MemberService {
     }
 
     public void updateUserInfo(MemberInfoUpdateRequest request) {
-        CustomOAuth2User user = (CustomOAuth2User) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
 
-        String username = user.getUsername();
-
-        Optional<Member> byUsername = memberRepository.findByUsername(username);
-
-        Member member = byUsername.orElseThrow();
+        Member member = authMemberProvider.getCurrentMember();
 
         member.updatePartial(request.getBio(),request.getNickname(),request.getImageUrl());
-
-
-
-
     }
+
+
+
 
     public MemberCountsResponse getCounts() {
 

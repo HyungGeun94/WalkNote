@@ -1,6 +1,9 @@
-package be.stepnote.member;
+package be.stepnote.member.controller;
 
 import be.stepnote.global.response.ApiResponse;
+import be.stepnote.member.dto.MemberCountsResponse;
+import be.stepnote.member.dto.MemberInfoResponse;
+import be.stepnote.member.service.MemberService;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
