@@ -1,4 +1,4 @@
-package be.stepnote.report.walk;
+package be.stepnote.report.walk.controller;
 
 import be.stepnote.config.security.CustomOAuth2User;
 import be.stepnote.global.response.ApiResponse;
@@ -8,17 +8,25 @@ import be.stepnote.report.comment.CommentRequest;
 import be.stepnote.report.comment.CommentResponse;
 import be.stepnote.report.comment.ReplyResponse;
 import be.stepnote.report.feed.WalkReportFeedResponse;
+import be.stepnote.report.walk.dto.WalkReportDetailResponse;
+import be.stepnote.report.walk.dto.WalkReportRequest;
+import be.stepnote.report.walk.dto.WalkReportSearchCondition;
+import be.stepnote.report.walk.service.WalkReportService;
+import be.stepnote.report.walk.dto.WalkReportSummaryResponse;
+import be.stepnote.report.walk.dto.WalkReportUpdateRequest;
+import be.stepnote.report.walk.dto.WalkReportUploadRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class WalkReportController {
 
-    private final int DEFAULT_PAGE_SIZE = 4;
+    private static final int DEFAULT_PAGE_SIZE = 4;
 
     private final WalkReportService walkReportService;
 
@@ -43,11 +51,9 @@ public class WalkReportController {
      */
     @PostMapping
     public ApiResponse<Long> createReport(
-        @RequestBody WalkReportRequest request,
-        @AuthenticationPrincipal CustomOAuth2User user
-    ) {
+        @RequestBody WalkReportRequest request) {
 
-        Long reportId = walkReportService.createReport(request,user.getUsername());
+        Long reportId = walkReportService.createReport(request);
 
         return ApiResponse.success(reportId);
     }
@@ -61,20 +67,10 @@ public class WalkReportController {
      */
     @GetMapping("/list")
     public ApiResponse<SliceResponse<WalkReportSummaryResponse>> getReports(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "LATEST") String sort,
-        @AuthenticationPrincipal CustomOAuth2User user,
-        @RequestParam(defaultValue = "false") boolean publicVisibility
+        @ModelAttribute WalkReportSearchCondition condition
     ) {
 
-        Sort sortOption = sort.equalsIgnoreCase("OLDEST")
-            ? Sort.by(Sort.Direction.ASC, "createdAt")
-            : Sort.by(Sort.Direction.DESC, "createdAt");
-
-        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, sortOption);
-
-        SliceResponse<WalkReportSummaryResponse> reports = walkReportService.getReports(pageable,
-            user.getUsername(), publicVisibility);
+        SliceResponse<WalkReportSummaryResponse> reports = walkReportService.getReports(condition);
 
         return ApiResponse.success(reports);
     }
@@ -85,18 +81,11 @@ public class WalkReportController {
 
     @GetMapping("/list/favorites")
     public ApiResponse<SliceResponse<WalkReportSummaryResponse>> getMyFavorites(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "LATEST") String sort,
-        @AuthenticationPrincipal CustomOAuth2User user
+        @ModelAttribute WalkReportSearchCondition condition
         ) {
-        Sort sortOption = sort.equalsIgnoreCase("OLDEST")
-            ? Sort.by(Sort.Direction.ASC, "createdAt")
-            : Sort.by(Sort.Direction.DESC, "createdAt");
-
-        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, sortOption);
 
         SliceResponse<WalkReportSummaryResponse> myFavoriteReports = walkReportService.getMyFavoriteReports(
-            pageable, user.getUsername());
+            condition);
 
         return ApiResponse.success(myFavoriteReports);
     }
@@ -106,9 +95,7 @@ public class WalkReportController {
      */
     @GetMapping("/detail/{reportId}")
     public ApiResponse<WalkReportDetailResponse> getReportDetail(
-
         @PathVariable Long reportId
-
     ) {
 
         WalkReportDetailResponse walkReportDetailResponse = walkReportService.reportDetail(
@@ -117,32 +104,27 @@ public class WalkReportController {
         return ApiResponse.success(walkReportDetailResponse);
     }
 
+
+
     @GetMapping("/authCheck/{reportId}")
     public ApiResponse<Boolean> authCheck(@PathVariable Long reportId) {
 
-        return ApiResponse.success(walkReportService.authCeheck(reportId));
-    }
+        boolean bool = walkReportService.authCeheck(reportId);
 
-    @GetMapping("/feed")
-    public List<WalkReportFeedResponse> getFeed(
-        @AuthenticationPrincipal CustomOAuth2User user,
-        Pageable pageable
-    ) {
-        return walkReportService.getFeed(pageable, user.getUsername());
+        return ApiResponse.success(bool);
     }
-
 
     /**
      * 산책 리포트 수정
      */
 
     @PatchMapping("/edit/{id}")
-    public ApiResponse<Void> updateReport(
+    public ApiResponse<Boolean> updateReport(
         @PathVariable Long id,
         @RequestBody WalkReportUpdateRequest request
     ) {
         walkReportService.updateReport(id, request);
-        return ApiResponse.success(null);
+        return ApiResponse.success(true);
     }
 
     /**
@@ -150,12 +132,12 @@ public class WalkReportController {
      */
     @GetMapping("/edit/{id}")
     public ApiResponse<WalkReportDetailResponse> getReportForEdit(
-        @AuthenticationPrincipal CustomOAuth2User me,
         @PathVariable Long id
     ) {
-        WalkReportDetailResponse response = walkReportService.getReportForEdit(me.getUsername(), id);
+        WalkReportDetailResponse response = walkReportService.getReportForEdit(id);
         return ApiResponse.success(response);
     }
+
 
     @PatchMapping("/upload/{reportId}")
     public ApiResponse<Void> uploadReport(
@@ -168,17 +150,39 @@ public class WalkReportController {
     }
 
 
+
+    //    산책 리포트 삭제
+    @DeleteMapping("/{reportId}")
+    public ApiResponse<?> deleteReport(@PathVariable Long reportId) {
+
+        walkReportService.deleteReport(reportId);
+        return ApiResponse.success(null);
+    }
+
+
+    // 리포트별 댓글 조회 (원본 댓글)
+    @GetMapping("/reply/{reportId}")
+    public ApiResponse<SliceResponse<CommentResponse>> getRootComments(
+        @PathVariable Long reportId,
+        @ParameterObject
+        @PageableDefault(page = 0, size = 4, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        SliceResponse<CommentResponse> rootComments = walkReportService.getRootComments(reportId,
+            pageable);
+        return ApiResponse.success(rootComments);
+    }
+
+
+
+
+
+    // TODO 아래부분 API 확정 및 테스트 코드 작성
+
+
     // 댓글 작성 (root or reply 모두 처리)
     @PostMapping("/reply")
     public void createComment(@AuthenticationPrincipal Member member,
         @RequestBody CommentRequest request) {
         walkReportService.replyCreate(member, request);
-    }
-
-    // 리포트별 댓글 조회 (원본 댓글)
-    @GetMapping("/reports/{reportId}")
-    public List<CommentResponse> getRootComments(@PathVariable Long reportId, Pageable pageable) {
-        return walkReportService.getRootComments(reportId, pageable);
     }
 
     // 특정 댓글의 대댓글 조회
@@ -187,12 +191,12 @@ public class WalkReportController {
         return walkReportService.getReplies(parentId);
     }
 
-    //    산책 리포트 삭제
-    @DeleteMapping("/{reportId}")
-    public ApiResponse<?> deleteReport(@PathVariable Long reportId) {
-
-        walkReportService.deleteReport(reportId);
-        return ApiResponse.success(null);
+    @GetMapping("/feed")
+    public List<WalkReportFeedResponse> getFeed(
+        @AuthenticationPrincipal CustomOAuth2User user,
+        Pageable pageable
+    ) {
+        return walkReportService.getFeed(pageable, user.getUsername());
     }
 }
 
