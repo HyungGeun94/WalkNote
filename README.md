@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="https://github.com/user-attachments/assets/STEPLOGO_TEMP.png" alt="Stepnote Logo" width="200" />
+  <img src="https://github.com/user-attachments/assets/e666e749-35e7-4a3a-ad08-1b692ffc0441" alt="Stepnote Logo" width="200" />
   <p>
   WalkNote
   <p>
@@ -28,6 +28,24 @@
 | 이름 | 역할 |
 |------|------|
 | [**HyungGeun**](https://github.com/HyungGeun94) | Backend (개인) |
+
+## 이미지
+<img width="202" height="443" alt="스크린샷 2025-10-31 오전 12 27 25" src="https://github.com/user-attachments/assets/1d5011ab-81d3-42d8-8e3c-e020cdf9b287" />
+<img width="198" height="439" alt="스크린샷 2025-10-31 오전 12 27 58" src="https://github.com/user-attachments/assets/8fe6a6be-8e8e-40c0-984f-d5a032772cd5" />
+
+<img width="204" height="439" alt="스크린샷 2025-10-31 오전 12 28 42" src="https://github.com/user-attachments/assets/32e8e779-e30a-450e-9d8f-bb929bcdcdd9" />
+
+
+<br>
+
+<img width="200" height="442" alt="스크린샷 2025-10-31 오전 12 27 13" src="https://github.com/user-attachments/assets/8d40edbd-bc33-434d-a6da-7672428d8a51" />
+
+<img width="197" height="443" alt="스크린샷 2025-10-31 오전 12 28 06" src="https://github.com/user-attachments/assets/e4d082e0-03a7-4581-a4ca-65c6ac10a06d" />
+
+
+
+
+
 
 ---
 
