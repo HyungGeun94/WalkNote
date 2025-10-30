@@ -25,9 +25,12 @@
 ---
 
 ## 👥 팀 구성
-| 이름 | 역할 |
-|------|------|
-| [**HyungGeun**](https://github.com/HyungGeun94) | Backend (개인) |
+| 이름 | 역할                |
+|------|-------------------|
+| [**HyungGeun**](https://github.com/HyungGeun94) | 🖥️ Backend       |
+| **Yejin** |  🧩 Product Planner                 |
+| **Eunbin** | 🎨Designer        |
+| **Junghoon** | 📱Android Developer |
 
 ## 이미지
 <img width="202" height="443" alt="스크린샷 2025-10-31 오전 12 27 25" src="https://github.com/user-attachments/assets/1d5011ab-81d3-42d8-8e3c-e020cdf9b287" />
