@@ -62,8 +62,11 @@ public class WalkReportCommentService {
 
         walkReportCommentRepository.save(rootComment);
 
-        notificationService.handleCommentNotification(walkReport, member, commentRequest.getContent());
-
+        notificationService.handleCommentNotification(
+            walkReport.getId(),
+            member.getId(),
+            commentRequest.getContent()
+        );
     }
 
 
