@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "walk_report_comment")
 public class WalkReportComment {
 
@@ -45,28 +44,22 @@ public class WalkReportComment {
 
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    public static WalkReportComment createRoot(WalkReport report, Member member, String content) {
+        return new WalkReportComment(report, member, content, null);
+    }
 
-
-    public static WalkReportComment createReply(Member member, WalkReport report, WalkReportComment parent, String content) {
+    public static WalkReportComment createReply( WalkReport report, Member member, String content, WalkReportComment parent) {
         return new WalkReportComment(report, member, content, parent);
     }
-
-    public boolean isRoot() {
-        return parent == null;
-    }
-
-
     private WalkReportComment(WalkReport report, Member member, String content, WalkReportComment walkReportComment) {
         this.walkReport = report;
         this.member = member;
         this.content = content;
         this.parent = walkReportComment;
     }
-
-    public static WalkReportComment createRoot(WalkReport report, Member member, String content) {
-        return new WalkReportComment(report, member, content, null);
+    public boolean isRoot() {
+        return parent == null;
     }
 }
