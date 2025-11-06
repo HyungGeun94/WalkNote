@@ -1,5 +1,6 @@
 package be.stepnote.report.walk.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Sort;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class WalkReportSearchCondition {
 
     private int page = 0;

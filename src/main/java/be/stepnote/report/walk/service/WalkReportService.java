@@ -68,10 +68,11 @@ public class WalkReportService {
 
 
         walkReport.createdBy(member);
-        walkReportRepository.save(walkReport);
+         walkReportRepository.save(walkReport);
 
         if (dto.isFavorite()) {
             WalkReportFavorite walkReportFavorite = WalkReportFavorite.create(walkReport);
+            walkReportFavorite.createdBy(member);
             walkReportFavoriteRepository.save(walkReportFavorite);
         }
 
@@ -81,30 +82,16 @@ public class WalkReportService {
     @Transactional(readOnly = true)
     public SliceResponse<WalkReportSummaryResponse> getReports(WalkReportSearchCondition condition) {
 
-//        Pageable pageable,
-//        boolean publicVisibility
         Member member = authMemberProvider.getCurrentMember();
 
         Slice<WalkReport> walkReports = walkReportRepository.findReportSummaries(member,
             condition.toPageable(), condition.isPublicVisibility());
 
-        Integer count = 0;
-
-        if(condition.isPublicVisibility()) {
-            List<WalkReport> byCreatedByAndPublicIsTrue = walkReportRepository.findByCreatedByAndIsPublic(
-                member, condition.isPublicVisibility());
-
-            count = byCreatedByAndPublicIsTrue.size();
-        }
-        else{
-            List<WalkReport> byCreatedBy = walkReportRepository.findByCreatedBy(member);
-            count = byCreatedBy.size();
-        }
+        Integer count = condition.isPublicVisibility() ? walkReportRepository.countByCreatedByAndIsPublic(member,true) :
+            walkReportRepository.countByCreatedBy(member);
 
 
-        Slice<WalkReportSummaryResponse> map = walkReports.map(
-            walkReport -> new WalkReportSummaryResponse(walkReport));
-
+        Slice<WalkReportSummaryResponse> map = walkReports.map(WalkReportSummaryResponse::new);
         SliceResponse<WalkReportSummaryResponse> walkReportSummaryResponseSliceResponse = SliceResponse.of(
             map, count);
 
@@ -118,9 +105,7 @@ public class WalkReportService {
 
         Slice<WalkReportSummaryResponse> map = favorites.map(WalkReportSummaryResponse::new);
 
-        List<WalkReportFavorite> byMember = walkReportFavoriteRepository.findByMember(member);
-        int size = byMember.size();
-
+        int size =  walkReportFavoriteRepository.countByMember(member).intValue();
 
         SliceResponse<WalkReportSummaryResponse> walkReportSliceResponse = SliceResponse.of(map, size);
 
@@ -187,20 +172,20 @@ public class WalkReportService {
 
 
 
-    public void replyCreate(Member author, CommentRequest request) {
-        WalkReport report = walkReportRepository.findById(request.getReportId())
-            .orElseThrow(() -> new IllegalArgumentException("리포트 없음"));
-
-        if (request.getParentId() == null) {
-            WalkReportComment root = WalkReportComment.createRoot(report, author , request.getContent());
-            commentRepository.save(root);
-        } else {
-            WalkReportComment parent = commentRepository.findById(request.getParentId())
-                .orElseThrow(() -> new IllegalArgumentException("부모 댓글 없음"));
-            WalkReportComment reply = WalkReportComment.createReply(author, report, parent, request.getContent());
-            commentRepository.save(reply);
-        }
-    }
+//    public void replyCreate(Member author, CommentRequest request) {
+//        WalkReport report = walkReportRepository.findById(request.getReportId())
+//            .orElseThrow(() -> new IllegalArgumentException("리포트 없음"));
+//
+//        if (request.getParentId() == null) {
+//            WalkReportComment root = WalkReportComment.createRoot(report, author , request.getContent());
+//            commentRepository.save(root);
+//        } else {
+//            WalkReportComment parent = commentRepository.findById(request.getParentId())
+//                .orElseThrow(() -> new IllegalArgumentException("부모 댓글 없음"));
+//            WalkReportComment reply = WalkReportComment.createReply(author, report, parent, request.getContent());
+//            commentRepository.save(reply);
+//        }
+//    }
 
     public SliceResponse<CommentResponse> getRootComments(Long reportId, Pageable pageable) {
         WalkReport report = walkReportRepository.findById(reportId)
@@ -209,9 +194,9 @@ public class WalkReportService {
         Slice<WalkReportComment> slice = commentRepository
             .findByWalkReportAndParentIsNull(report, pageable);
 
-        Map<Long, Long> longLongMap = commentRepository.countCommentsByReportIds(List.of(reportId));
+        Long l = commentRepository.countByWalkReportId(reportId);
 
-        int count = longLongMap.getOrDefault(reportId,0L).intValue();
+        int count = l.intValue();
 
         Slice<CommentResponse> map = slice.map(s -> CommentResponse.from(s,commentRepository.countByParent(s)));
 
@@ -220,6 +205,7 @@ public class WalkReportService {
         return commentResponseSliceResponse;
     }
 
+    // 대댓글 조회
     public List<ReplyResponse> getReplies(Long parentId) {
         WalkReportComment parent = commentRepository.findById(parentId)
             .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
@@ -282,6 +268,14 @@ public class WalkReportService {
 
 
 
+
+    }
+
+    public void deleteFavorites(List<Long> ids) {
+
+        Member member = authMemberProvider.getCurrentMember();
+
+        walkReportFavoriteRepository.deleteByMemberAndWalkReportIdIn(member,ids);
 
     }
 }
