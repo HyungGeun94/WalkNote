@@ -1,7 +1,9 @@
 package be.stepnote.config.security;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.member.entity.NotificationSetting;
 import be.stepnote.member.repository.MemberRepository;
+import be.stepnote.member.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
+
+    private final NotificationSettingRepository notificationSettingRepository;
 
 
     @Override
@@ -50,6 +54,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .build();
 
             memberRepository.save(member);
+
+            notificationSettingRepository.save(NotificationSetting.createDefault(member));
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
