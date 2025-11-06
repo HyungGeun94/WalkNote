@@ -103,5 +103,11 @@ public class MemberService {
     public void getProfile(String userId) {
 
     }
+
+
+    public void deleteMember() {
+        Member member = authMemberProvider.getCurrentMember();
+        member.softDelete();
+    }
 }
 

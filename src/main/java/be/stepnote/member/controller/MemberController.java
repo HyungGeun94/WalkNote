@@ -11,6 +11,8 @@ import be.stepnote.member.repository.MemberInfoUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,14 +37,12 @@ public class MemberController {
     }
 
 
-
     @GetMapping("/myPage/count")
     public ApiResponse<MemberCountsResponse> getmyCount() {
 
         MemberCountsResponse counts = memberService.getCounts();
 
         return ApiResponse.success(counts);
-
 
 
     }
@@ -79,9 +79,13 @@ public class MemberController {
 
         memberService.getProfile(userId);
 
-
         return null;
     }
 
+    @DeleteMapping("/withdraw")
+    public ApiResponse<?> withdraw() {
+        memberService.deleteMember();
+        return ApiResponse.success("회원탈퇴 완료");
+    }
 
 }

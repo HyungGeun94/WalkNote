@@ -48,6 +48,10 @@ public class Member {
 
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    private boolean isDeleted = false;
+
+
+
 //    @Builder(access = AccessLevel.PRIVATE) -> 점진적 도입
     @Builder
     private Member(String username, String role, String nickname,String email,String profileImageUrl, String name,String password) {
@@ -88,5 +92,9 @@ public class Member {
 
     private boolean hasText(String s) {
         return s != null && !s.trim().isEmpty();
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }
