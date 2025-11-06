@@ -5,6 +5,7 @@ import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.dto.MemberCountsResponse;
 import be.stepnote.member.dto.MemberInfoResponse;
 import be.stepnote.member.dto.NotificationSettingRequest;
+import be.stepnote.member.dto.NotificationSettingResponse;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.entity.NotificationSetting;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
@@ -86,6 +87,17 @@ public class MemberService {
             dto.isSaveEnabled(),
             dto.isFollowEnabled()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public NotificationSettingResponse getNotificationSetting() {
+        Member member = authMemberProvider.getCurrentMember();
+
+        NotificationSetting setting = notificationSettingRepository
+            .findByMember(member)
+            .orElseThrow(() -> new IllegalStateException("알림 설정이 존재하지 않습니다."));
+
+        return NotificationSettingResponse.from(setting);
     }
 
     public void getProfile(String userId) {

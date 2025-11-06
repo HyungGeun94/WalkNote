@@ -5,6 +5,7 @@ import be.stepnote.member.dto.FcmTokenRequest;
 import be.stepnote.member.dto.MemberCountsResponse;
 import be.stepnote.member.dto.MemberInfoResponse;
 import be.stepnote.member.dto.NotificationSettingRequest;
+import be.stepnote.member.dto.NotificationSettingResponse;
 import be.stepnote.member.service.MemberService;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
 import jakarta.validation.Valid;
@@ -64,6 +65,12 @@ public class MemberController {
     public ApiResponse<Void> updateNotificationSetting(@RequestBody @Valid NotificationSettingRequest request) {
         memberService.update(request);
         return ApiResponse.success(null);
+    }
+
+    @GetMapping("/notification/setting")
+    public ApiResponse<NotificationSettingResponse> getNotificationSetting() {
+        NotificationSettingResponse response = memberService.getNotificationSetting();
+        return ApiResponse.success(response);
     }
 
 
