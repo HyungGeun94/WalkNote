@@ -25,7 +25,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
     name = "member_follow",
     uniqueConstraints = @UniqueConstraint(columnNames = {"follower_id", "following_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class Follow {
 
     @Id
@@ -43,10 +42,8 @@ public class Follow {
     @JoinColumn(name = "following_id" , nullable = false)
     private Member following;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member createdBy;
@@ -56,6 +53,7 @@ public class Follow {
         Follow follow = new Follow();
         follow.follower = follower;
         follow.following = following;
+        follow.createdBy = follower;
         return follow;
     }
 

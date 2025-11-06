@@ -25,7 +25,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 @Table(
     name = "walk_report_favorite",
     uniqueConstraints = {
@@ -42,18 +41,20 @@ public class WalkReportFavorite {
     @JoinColumn(name = "report_id", nullable = false)
     private WalkReport walkReport;
 
-    @CreatedBy
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt= LocalDateTime.now();
 
     public static WalkReportFavorite create(WalkReport walkReport){
 
         return new WalkReportFavorite(walkReport);
 
+    }
+
+    public void createdBy(Member member){
+        this.member = member;
     }
 
 
