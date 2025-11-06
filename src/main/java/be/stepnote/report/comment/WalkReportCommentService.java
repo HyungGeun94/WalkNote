@@ -1,6 +1,7 @@
 package be.stepnote.report.comment;
 
 
+import be.stepnote.alarm.NotificationService;
 import be.stepnote.global.response.SliceResponse;
 import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.entity.Member;
@@ -8,6 +9,7 @@ import be.stepnote.report.walk.entity.WalkReport;
 import be.stepnote.report.walk.repository.WalkReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,10 @@ public class WalkReportCommentService {
     private final AuthMemberProvider authMemberProvider;
 
     private final WalkReportRepository walkReportRepository;
+
+    private final NotificationService notificationService;
+
+
 
     public void createComment(CommentRequest commentRequest) {
 
@@ -55,6 +61,8 @@ public class WalkReportCommentService {
         }
 
         walkReportCommentRepository.save(rootComment);
+
+        notificationService.handleCommentNotification(walkReport, member, commentRequest.getContent());
 
     }
 
