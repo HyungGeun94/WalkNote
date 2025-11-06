@@ -21,4 +21,7 @@ public interface WalkReportCommentRepository extends JpaRepository<WalkReportCom
     // 대댓글 개수
     long countByParent(WalkReportComment parent);
 
+    long countByWalkReportId(Long walkReportId);
+
+    Slice<WalkReportComment> findByParent(WalkReportComment parentComment, Pageable pageable);
 }
