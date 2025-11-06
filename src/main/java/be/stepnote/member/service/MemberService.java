@@ -59,6 +59,12 @@ public class MemberService {
         return new MemberCountsResponse(favoriteCount, followerCount, followingCount);
     }
 
+    @Transactional
+    public void updateFcmToken(String token) {
+        Member member = authMemberProvider.getCurrentMember();
+        member.updateFcmToken(token);
+    }
+
     public void getProfile(String userId) {
 
     }

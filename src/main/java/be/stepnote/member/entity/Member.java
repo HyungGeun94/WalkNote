@@ -41,7 +41,7 @@ public class Member {
 
     private String role;
 
-    // 유저 개인 fcm알람을 위한 토큰 저장
+    @Column(length = 255)
     private String fcmToken;
 
     private LocalDateTime createdAt = LocalDateTime.now();
