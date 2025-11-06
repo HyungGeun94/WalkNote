@@ -58,5 +58,9 @@ public class MemberService {
 
         return new MemberCountsResponse(favoriteCount, followerCount, followingCount);
     }
+
+    public void getProfile(String userId) {
+
+    }
 }
 

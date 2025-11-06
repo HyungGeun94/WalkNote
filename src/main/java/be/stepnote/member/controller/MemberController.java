@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,8 @@ public class MemberController {
 
     }
 
+
+
     @GetMapping("/myPage/count")
     public ApiResponse<MemberCountsResponse> getmyCount() {
 
@@ -46,5 +49,16 @@ public class MemberController {
 
         return ApiResponse.success(null);
     }
+
+
+    @GetMapping("/profile/{userId}")
+    public ApiResponse<MemberInfoResponse> getProfile(@PathVariable String userId) {
+
+        memberService.getProfile(userId);
+
+
+        return null;
+    }
+
 
 }
