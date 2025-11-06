@@ -16,15 +16,17 @@ public class CommentResponse {
 
     private Long id;
     private String content;
-    private String authorNickname;
+    private String nickname;
     private LocalDateTime createdAt;
     private Long replyCount;
+    private String profileImageUrl;
 
     public static CommentResponse from(WalkReportComment comment, long replyCount) {
         return CommentResponse.builder()
             .id(comment.getId())
             .content(comment.getContent())
-            .authorNickname(comment.getMember().getNickname())
+            .nickname(comment.getMember().getNickname())
+            .profileImageUrl(comment.getMember().getProfileImageUrl())
             .createdAt(comment.getCreatedAt())
             .replyCount(replyCount)
             .build();

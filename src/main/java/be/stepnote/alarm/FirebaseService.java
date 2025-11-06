@@ -1,10 +1,12 @@
 package be.stepnote.alarm;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class FirebaseService {
     public void send(String title, String body, String token) {
         try {
@@ -19,8 +21,13 @@ public class FirebaseService {
                 .putData("title", title)
                 .putData("body", body)
                 .build();
-            com.google.firebase.messaging.FirebaseMessaging.getInstance().send(msg);
+
+            String response = FirebaseMessaging.getInstance().send(msg);
+
+            log.info("[FCM] 성공: {} -> {}", title, response);
+
         } catch (com.google.firebase.messaging.FirebaseMessagingException e) {
+            log.error("[FCM] 실패: {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

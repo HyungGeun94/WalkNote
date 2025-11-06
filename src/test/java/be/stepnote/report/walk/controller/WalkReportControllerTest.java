@@ -237,8 +237,8 @@ class WalkReportControllerTest {
     @WithMockUser()
     void 게시글_댓글_조회() throws Exception {
 
-        CommentResponse commentResponse1 = new CommentResponse(1L,"content","nickname",LocalDateTime.now(),0L);
-        CommentResponse commentResponse2 = new CommentResponse(1L,"content","nickname",LocalDateTime.now(),0L);
+        CommentResponse commentResponse1 = new CommentResponse(1L,"content","nickname",LocalDateTime.now(),0L,"image1");
+        CommentResponse commentResponse2 = new CommentResponse(1L,"content","nickname",LocalDateTime.now(),0L,"image2");
 
         SliceResponse sliceResponse = new SliceResponse(List.of(commentResponse1,commentResponse2), false, 0, 4, 1);
 
