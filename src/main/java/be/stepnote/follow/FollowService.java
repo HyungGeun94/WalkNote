@@ -1,10 +1,15 @@
 package be.stepnote.follow;
 
 
+import be.stepnote.global.response.SliceResponse;
+import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
+import be.stepnote.report.walk.dto.WalkReportSearchCondition;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +20,17 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final AuthMemberProvider authMemberProvider;
 
     /**
      * 팔로우 하기
      */
-    public void follow(Member follower, Member following) {
+    public void follow(Long userId) {
+
+        Member follower = authMemberProvider.getCurrentMember();
+
+        Member following = memberRepository.findById(userId).orElseThrow();
+
         // 자기 자신은 팔로우 불가
         if (follower.getId().equals(following.getId())) {
             throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
@@ -37,9 +48,14 @@ public class FollowService {
     /**
      * 언팔로우 하기
      */
-    public void unfollow(Member follower, Member following) {
+    public void unfollow(Long userId)  {
+
+        Member follower = authMemberProvider.getCurrentMember();
+
+        Member following = memberRepository.findById(userId).orElseThrow();
+
         if (!isFollowed(follower, following)) {
-            throw new IllegalStateException("팔로우 중이 아닙니다.");
+            throw new RuntimeException("팔로우 중이 아닙니다.");
         }
 
         followRepository.deleteByFollowerAndFollowing(follower, following);
@@ -52,29 +68,41 @@ public class FollowService {
         return followRepository.existsByFollowerAndFollowing(follower, following);
     }
 
-    public List<MemberSimpleResponse> getFollowers(String username) {
-        Member me = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+    public SliceResponse<MemberSimpleResponse> getFollowers(WalkReportSearchCondition condition) {
 
-        List<Long> followerIds = followRepository.findFollowerIdsByFollowingId(me.getId());
-        List<Member> followers = memberRepository.findAllById(followerIds);
+        Member me = authMemberProvider.getCurrentMember();
 
-        return
-            followers.stream()
-                .map(MemberSimpleResponse::from)
-                .toList();
+        Slice<Long> followerIds = followRepository.findFollowerIdsByFollowingId(me.getId(),condition.toPageable());
+        List<Member> followers = memberRepository.findAllById(followerIds.getContent());
+
+        Long count = followRepository.countByFollowing(me);
+
+        List<MemberSimpleResponse> list = followers.stream().map(MemberSimpleResponse::from)
+            .toList();
+
+        SliceResponse<MemberSimpleResponse> sliceResponse = new SliceResponse(list, followerIds.hasNext(),
+            followerIds.getNumber(), followerIds.getSize(), count.intValue());
+
+        return sliceResponse;
     }
 
-    public List<MemberSimpleResponse> getFollowings(String username) {
-        Member me = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+    public SliceResponse<MemberSimpleResponse> getFollowings(WalkReportSearchCondition condition) {
 
-        List<Long> followingIds = followRepository.findFollowingIdsByFollowerId(me.getId());
-        List<Member> followings = memberRepository.findAllById(followingIds);
+        Member me = authMemberProvider.getCurrentMember();
+
+        Slice<Long> followingIds = followRepository.findFollowingIdsByFollowerId(me.getId(),condition.toPageable());
+        List<Member> followings = memberRepository.findAllById(followingIds.getContent());
+
+        Long count = followRepository.countByFollower(me);
+
+        List<MemberSimpleResponse> list = followings.stream().map(MemberSimpleResponse::from)
+            .toList();
+
+        SliceResponse<MemberSimpleResponse> sliceResponse = new SliceResponse<>(
+            list, followingIds.hasNext(), followingIds.getNumber(), followingIds.getSize(),
+            count.intValue());
 
         return
-            followings.stream()
-                .map(MemberSimpleResponse::from)
-                .toList();
+            sliceResponse;
     }
 }
