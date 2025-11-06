@@ -35,9 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/test/java/be/stepnote/Test.java
 /src/main/resources/application.yml
 /src/main/resources/application-test.yml
 /src/test/resources/application.yml
 /memo.txt
 /src/main/resources/firebasekey/firebase-admin-key.json
+/src/test/java/be/stepnote/ExampleTest.java
