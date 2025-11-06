@@ -179,11 +179,11 @@ public class WalkReportController {
 
 
     // 댓글 작성 (root or reply 모두 처리)
-    @PostMapping("/reply")
-    public void createComment(@AuthenticationPrincipal Member member,
-        @RequestBody CommentRequest request) {
-        walkReportService.replyCreate(member, request);
-    }
+//    @PostMapping("/reply")
+//    public void createComment(@AuthenticationPrincipal Member member,
+//        @RequestBody CommentRequest request) {
+//        walkReportService.replyCreate(member, request);
+//    }
 
     // 특정 댓글의 대댓글 조회
     @GetMapping("/{parentId}/replies")
@@ -198,6 +198,16 @@ public class WalkReportController {
     ) {
         return walkReportService.getFeed(pageable, user.getUsername());
     }
+
+    @DeleteMapping("/favorites/del")
+    public ApiResponse<Void> deleteFavorites(@RequestBody List<Long> ids){
+
+        walkReportService.deleteFavorites(ids);
+
+
+        return ApiResponse.success(null);
+    }
+
 }
 
 

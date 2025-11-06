@@ -31,6 +31,8 @@ public class WalkReportCustomRepositoryImpl implements WalkReportCustomRepositor
 
         BooleanBuilder condition = new BooleanBuilder();
         condition.and(walkReport.createdBy.id.eq(member.getId())); // 기본 조건
+        condition.and(walkReport.active.isTrue());  // 삭제되지 않은 게시글만
+
 
         if (publicVisibility) {
             condition.and(walkReport.isPublic.isTrue()); //  공개 게시글만 필터링
@@ -59,7 +61,9 @@ public class WalkReportCustomRepositoryImpl implements WalkReportCustomRepositor
             .selectFrom(walkReport)
             .join(walkReportFavorite)
             .on(walkReportFavorite.walkReport.eq(walkReport))
-            .where(walkReportFavorite.member.eq(member))
+            .where(walkReportFavorite.member.eq(member),
+                walkReport.active.isTrue()  // 삭제되지 않은 게시글만
+            )
             .orderBy(order)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize() + 1)
