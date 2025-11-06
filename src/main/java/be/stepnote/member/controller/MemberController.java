@@ -4,6 +4,7 @@ import be.stepnote.global.response.ApiResponse;
 import be.stepnote.member.dto.FcmTokenRequest;
 import be.stepnote.member.dto.MemberCountsResponse;
 import be.stepnote.member.dto.MemberInfoResponse;
+import be.stepnote.member.dto.NotificationSettingRequest;
 import be.stepnote.member.service.MemberService;
 import be.stepnote.member.repository.MemberInfoUpdateRequest;
 import jakarta.validation.Valid;
@@ -56,6 +57,12 @@ public class MemberController {
     @PostMapping("/fcm/token")
     public ApiResponse<Void> updateFcmToken(@RequestBody @Valid FcmTokenRequest request) {
         memberService.updateFcmToken(request.getToken());
+        return ApiResponse.success(null);
+    }
+
+    @PostMapping("/notification/setting")
+    public ApiResponse<Void> updateNotificationSetting(@RequestBody @Valid NotificationSettingRequest request) {
+        memberService.update(request);
         return ApiResponse.success(null);
     }
 
