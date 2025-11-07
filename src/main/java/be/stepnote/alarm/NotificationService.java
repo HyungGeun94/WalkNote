@@ -8,6 +8,7 @@ import be.stepnote.member.repository.MemberRepository;
 import be.stepnote.member.repository.NotificationSettingRepository;
 import be.stepnote.report.walk.entity.WalkReport;
 import be.stepnote.report.walk.repository.WalkReportRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NotificationService {
 
     private final FirebaseService firebaseService;
@@ -27,7 +29,6 @@ public class NotificationService {
     private final AuthMemberProvider authMemberProvider;
 
     @Async
-    @Transactional
     public void handleCommentNotification(Long reportId, Long writerId, String content) {
 
         WalkReport report = walkReportRepository.findById(reportId)
@@ -71,7 +72,6 @@ public class NotificationService {
     }
 
 
-    @Transactional
     public void markAsRead(Long notificationId) {
         Member member = authMemberProvider.getCurrentMember();
 
@@ -86,4 +86,13 @@ public class NotificationService {
     }
 
 
+    public void markAllAsRead() {
+        Member member = authMemberProvider.getCurrentMember();
+
+        //  안 읽은 알림만 조회
+        List<Notification> unreadList = notificationRepository.findAllByReceiverIdAndIsReadFalse(member.getId());
+
+        //   전체 읽음 처리
+        unreadList.forEach(Notification::markAsRead);
+    }
 }

@@ -1,6 +1,7 @@
 package be.stepnote.alarm;
 
 import be.stepnote.member.entity.Member;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     );
 
     Integer countByReceiver(Member member);
+
+    @Query("""
+        select n
+        from Notification n
+        where n.receiver.id = :receiverId
+          and n.isRead = false
+        """)
+    List<Notification> findAllByReceiverIdAndIsReadFalse(@Param("receiverId") Long receiverId);
 }

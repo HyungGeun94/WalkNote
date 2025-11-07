@@ -33,4 +33,10 @@ public class NotificationController {
         return ApiResponse.success("읽음 처리 완료");
     }
 
+    @PatchMapping("/read-all")
+    public ApiResponse<?> markAllAsRead() {
+        notificationService.markAllAsRead();
+        return ApiResponse.success("모두 읽음 처리 완료");
+    }
+
 }
