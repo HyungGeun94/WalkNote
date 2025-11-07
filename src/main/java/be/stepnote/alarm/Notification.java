@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,8 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")    //  알림 보낸 사람
     private Member sender;
+
+    private LocalDateTime createdTime = LocalDateTime.now();
 
     public static Notification createCommentNotification(Member receiver, Member sender, String content, WalkReport report) {
         Notification n = new Notification();
