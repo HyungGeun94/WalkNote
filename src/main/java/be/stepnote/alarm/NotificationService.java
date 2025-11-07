@@ -71,4 +71,19 @@ public class NotificationService {
     }
 
 
+    @Transactional
+    public void markAsRead(Long notificationId) {
+        Member member = authMemberProvider.getCurrentMember();
+
+        Notification notification = notificationRepository.findById(notificationId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 알림입니다."));
+
+        if (!notification.getReceiver().getId().equals(member.getId())) {
+            throw new IllegalStateException("본인 알림만 읽음 처리할 수 있습니다.");
+        }
+
+        notification.markAsRead(); // 내부 상태 변경
+    }
+
+
 }
