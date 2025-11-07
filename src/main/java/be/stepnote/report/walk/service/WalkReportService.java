@@ -149,7 +149,9 @@ public class WalkReportService {
     public List<WalkReportFeedResponse> getFeed(Pageable pageable) {
         Member me = authMemberProvider.getCurrentMember();
 
+        //슬라이스로 구조 바꿔야함.
         List<WalkReport> reports = walkReportRepository.findAll(pageable).getContent();
+
 
         return feedAssembler.assemble(reports, me);
     }
