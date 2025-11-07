@@ -14,17 +14,13 @@ public class FirebaseService {
     public void send(String title, String body, String token) {
         try {
 
-            System.out.println("token = " + token);
-
             Message msg = Message.builder()
                 .setToken(token)
                 .putData("title", title)
                 .putData("body", body)
                 .build();
 
-            String response = FirebaseMessaging.getInstance().send(msg);
-
-            log.info("[FCM] 성공: {} -> {}", title, response);
+            FirebaseMessaging.getInstance().send(msg);
 
         } catch (com.google.firebase.messaging.FirebaseMessagingException e) {
             log.error("[FCM] 실패: {}", e.getMessage(), e);

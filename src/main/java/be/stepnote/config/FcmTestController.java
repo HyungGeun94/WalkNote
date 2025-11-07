@@ -1,5 +1,6 @@
-package be.stepnote.alarm;
+package be.stepnote.config;
 
+import be.stepnote.alarm.FirebaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
