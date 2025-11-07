@@ -1,8 +1,10 @@
 package be.stepnote.report.block;
 
+import be.stepnote.follow.MemberSimpleResponse;
 import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +41,15 @@ public class BlockService {
         }
 
         blockRepository.deleteByBlockerIdAndBlockedId(blocker.getId(), blockedId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberSimpleResponse> getBlockedMembers() {
+        Member me = authMemberProvider.getCurrentMember();
+        List<Member> blockedMembers = memberRepository.findBlockedMembers(me.getId());
+
+        return blockedMembers.stream()
+            .map(MemberSimpleResponse::from)
+            .toList();
     }
 }

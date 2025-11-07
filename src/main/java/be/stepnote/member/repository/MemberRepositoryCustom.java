@@ -7,4 +7,8 @@ public interface MemberRepositoryCustom {
 
     List<Member> findAllUsers();
 
+    List<Member> findBlockedMembers(Long blockerId);
 }
+
+
+
