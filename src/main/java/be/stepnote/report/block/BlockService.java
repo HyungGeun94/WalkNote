@@ -29,4 +29,15 @@ public class BlockService {
         Block block = Block.create(blocker, blocked);
         blockRepository.save(block);
     }
+
+    // 차단 해제
+    public void unblockMember(Long blockedId) {
+        Member blocker = authMemberProvider.getCurrentMember();
+
+        if (!blockRepository.existsByBlockerIdAndBlockedId(blocker.getId(), blockedId)) {
+            throw new IllegalStateException("차단되지 않은 회원입니다.");
+        }
+
+        blockRepository.deleteByBlockerIdAndBlockedId(blocker.getId(), blockedId);
+    }
 }
