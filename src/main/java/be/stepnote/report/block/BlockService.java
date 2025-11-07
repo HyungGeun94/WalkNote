@@ -1,0 +1,32 @@
+package be.stepnote.report.block;
+
+import be.stepnote.member.AuthMemberProvider;
+import be.stepnote.member.entity.Member;
+import be.stepnote.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class BlockService {
+
+    private final BlockRepository blockRepository;
+    private final MemberRepository memberRepository;
+    private final AuthMemberProvider authMemberProvider;
+
+    //  차단 등록
+    public void blockMember(Long blockedId) {
+        Member blocker = authMemberProvider.getCurrentMember();
+        Member blocked = memberRepository.findById(blockedId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        if (blockRepository.existsByBlockerIdAndBlockedId(blocker.getId(), blockedId)) {
+            throw new IllegalStateException("이미 차단한 회원입니다.");
+        }
+
+        Block block = Block.create(blocker, blocked);
+        blockRepository.save(block);
+    }
+}

@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    name = "block",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"blocker_id", "blocked_id"})
+    }
+)
 public class Block {
 
     @Id
@@ -26,13 +32,10 @@ public class Block {
 
     private LocalDateTime createdAt;
 
-    private String reason;
-
-    public static Block create(Member blocker, Member blocked, String reason) {
+    public static Block create(Member blocker, Member blocked) {
         Block block = new Block();
         block.blocker = blocker;
         block.blocked = blocked;
-        block.reason = reason;
         block.createdAt = LocalDateTime.now();
         return block;
     }

@@ -193,10 +193,9 @@ public class WalkReportController {
 
     @GetMapping("/feed")
     public List<WalkReportFeedResponse> getFeed(
-        @AuthenticationPrincipal CustomOAuth2User user,
         Pageable pageable
     ) {
-        return walkReportService.getFeed(pageable, user.getUsername());
+        return walkReportService.getFeed(pageable);
     }
 
     @DeleteMapping("/favorites/del")

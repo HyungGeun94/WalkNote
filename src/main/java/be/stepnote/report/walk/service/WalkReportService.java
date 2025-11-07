@@ -146,9 +146,8 @@ public class WalkReportService {
         return new WalkReportDetailResponse(report);
     }
 
-    public List<WalkReportFeedResponse> getFeed(Pageable pageable, String username) {
-        Member me = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+    public List<WalkReportFeedResponse> getFeed(Pageable pageable) {
+        Member me = authMemberProvider.getCurrentMember();
 
         List<WalkReport> reports = walkReportRepository.findAll(pageable).getContent();
 
