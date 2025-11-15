@@ -1,9 +1,12 @@
 package be.stepnote.report.walk.repository;
 
+import static be.stepnote.member.entity.QMember.*;
 import static be.stepnote.report.favorite.QWalkReportFavorite.walkReportFavorite;
 import static be.stepnote.report.walk.entity.QWalkReport.walkReport;
 
 import be.stepnote.member.entity.Member;
+import be.stepnote.member.entity.QMember;
+import be.stepnote.report.walk.dto.WalkReportSearchCondition;
 import be.stepnote.report.walk.entity.QWalkReport;
 import be.stepnote.report.walk.entity.WalkReport;
 import com.querydsl.core.BooleanBuilder;
@@ -71,6 +74,33 @@ public class WalkReportCustomRepositoryImpl implements WalkReportCustomRepositor
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) results.remove(pageable.getPageSize());
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<WalkReport> getFeedReports(
+        WalkReportSearchCondition condition,
+        List<Long> blockedIds
+    ) {
+        Pageable pageable = condition.toPageable();
+
+        List<WalkReport> results = queryFactory
+            .select(walkReport)
+            .from(walkReport)
+            .join(walkReport.createdBy, member).fetchJoin()
+            .where(
+                walkReport.active.isTrue(),
+                blockedIds.isEmpty() ? null :
+                    walkReport.createdBy.id.notIn(blockedIds)
+            )
+            .orderBy(getOrder(pageable, walkReport))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize() + 1)
+            .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+        if (hasNext) results.remove(results.size() - 1);
 
         return new SliceImpl<>(results, pageable, hasNext);
     }
