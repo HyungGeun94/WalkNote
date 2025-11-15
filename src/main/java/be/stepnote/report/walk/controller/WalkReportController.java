@@ -191,11 +191,14 @@ public class WalkReportController {
         return walkReportService.getReplies(parentId);
     }
 
+
     @GetMapping("/feed")
-    public List<WalkReportFeedResponse> getFeed(
-        Pageable pageable
+    public ApiResponse<SliceResponse<WalkReportFeedResponse>> getFeed(
+        @ParameterObject WalkReportSearchCondition condition
     ) {
-        return walkReportService.getFeed(pageable);
+        return ApiResponse.success(
+            walkReportService.getFeed(condition)
+        );
     }
 
     @DeleteMapping("/favorites/del")

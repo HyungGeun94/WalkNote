@@ -31,8 +31,5 @@ public class WalkReportFeedResponse {
 
     private Long commentCount;
 
-    private boolean alarmExists;
-
-
     private LocalDateTime createdAt;
 }

@@ -4,6 +4,7 @@ import be.stepnote.global.response.SliceResponse;
 import be.stepnote.member.AuthMemberProvider;
 import be.stepnote.member.entity.Member;
 import be.stepnote.member.repository.MemberRepository;
+import be.stepnote.report.block.BlockRepository;
 import be.stepnote.report.favorite.WalkReportFavorite;
 import be.stepnote.report.favorite.WalkReportFavoriteRepository;
 import be.stepnote.report.comment.CommentRequest;
@@ -46,6 +47,7 @@ public class WalkReportService {
     private final WalkReportCommentRepository commentRepository;
     private final AuthMemberProvider authMemberProvider;
     private final WalkReportLikeRepository walkReportLikeRepository;
+    private final BlockRepository blockRepository;
 
 
     public Long createReport(WalkReportRequest dto) {
@@ -146,14 +148,20 @@ public class WalkReportService {
         return new WalkReportDetailResponse(report);
     }
 
-    public List<WalkReportFeedResponse> getFeed(Pageable pageable) {
+    public SliceResponse<WalkReportFeedResponse> getFeed(WalkReportSearchCondition condition) {
         Member me = authMemberProvider.getCurrentMember();
 
-        //슬라이스로 구조 바꿔야함.
-        List<WalkReport> reports = walkReportRepository.findAll(pageable).getContent();
+        // 1) 내가 차단한 사용자 리스트 조회
+        List<Long> blockedIds = blockRepository.findBlockedMemberIds(me.getId());
 
+        // 2) Feed 조회 (차단된 사용자 리포트는 DB에서 제외)
+        Slice<WalkReport> slice =
+            walkReportRepository.getFeedReports(condition, blockedIds);
 
-        return feedAssembler.assemble(reports, me);
+        List<WalkReportFeedResponse> assemble = feedAssembler.assemble(slice.getContent(), me);
+
+        return new SliceResponse<>(assemble, slice.hasNext(), slice.getNumber(), slice.getSize(),
+            0);
     }
 
 

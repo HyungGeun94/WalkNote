@@ -25,13 +25,10 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     //  차단 관계 삭제
     void deleteByBlockerIdAndBlockedId(Long blockerId, Long blockedId);
 
-    //  내가 차단한 모든 회원 ID 조회 (Feed 조회에서 제외용)
     @Query("""
-        select blocked.id
+        select b.blocked.id
         from Block b
-        join Member blocker on b.blocker.id = blocker.id
-        join Member blocked on b.blocked.id = blocked.id
-        where blocker.id = :blockerId
-    """)
-    List<Long> findBlockedMemberIdsByBlockerId(@Param("blockerId") Long blockerId);
+        where b.blocker.id = :blockerId
+        """)
+    List<Long> findBlockedMemberIds(@Param("blockerId") Long blockerId);
 }
